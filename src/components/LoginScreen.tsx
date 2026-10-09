@@ -4,7 +4,7 @@ import {
   FileText,
   Smartphone,
   Share,
-  Plus,
+  PlusSquare,
   MoreVertical,
   Download,
   ChevronDown,
@@ -116,48 +116,54 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
               {/* iOS Guide Steps */}
               {activeTab === 'ios' && (
                 <div className="flex flex-col gap-2.5 text-[12.5px] sm:text-[13px]">
+                  {/* Step 1 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       1
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      <strong>Safari</strong> 브라우저 하단 중앙의{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline">
-                        <Share className="w-3 h-3 inline mr-0.5 stroke-[2.2]" />
+                      Safari 하단 오른쪽의{' '}
+                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline text-[11.5px]">
+                        <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[#8B95A1] text-[9px] mr-1 font-bold leading-none">···</span>
+                        더보기
+                      </span>
+                      를 누르고,{' '}
+                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline text-[11.5px]">
+                        <Share className="w-3 h-3 inline mr-1 stroke-[2.2]" />
                         공유
                       </span>
-                      버튼(네모에 화살표)을 터치하세요.
+                      를 터치하세요.
                     </div>
                   </div>
 
+                  {/* Step 2 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       2
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      공유창 메뉴에서{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline">
-                        ··· 더보기
-                      </span>
-                      를 누르거나 화면을 아래로 내려{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline">
-                        <Plus className="w-3 h-3 inline mr-0.5 stroke-[2.5]" />
-                        홈 화면에 추가
-                      </span>
+                      공유 메뉴를 아래로 내려
+                      <div className="my-1">
+                        <span className="inline-flex items-center gap-1.5 font-bold text-[#1B64DA] bg-[#E8F3FF] px-2.5 py-1 rounded-lg text-[12px] whitespace-nowrap shadow-xs">
+                          <PlusSquare className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
+                          홈 화면에 추가
+                        </span>
+                      </div>
                       항목을 선택하세요.
                     </div>
                   </div>
 
+                  {/* Step 3 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       3
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      우측 상단{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline">
+                      우측 상단의{' '}
+                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline text-[11.5px]">
                         추가
-                      </span>
-                      를 누르면 홈 화면에 앱이 생성돼요! 생성된 앱으로 실행해 로그인하세요.
+                      </span>{' '}
+                      버튼을 누르면 홈 화면에 앱이 설치돼요! 생성된 앱으로 실행해 로그인하세요.
                     </div>
                   </div>
 
@@ -174,13 +180,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
               {/* Android Guide Steps */}
               {activeTab === 'android' && (
                 <div className="flex flex-col gap-2.5 text-[12.5px] sm:text-[13px]">
+                  {/* Step 1 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       1
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
                       <strong>Chrome</strong> 브라우저 우측 상단{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline">
+                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline text-[11.5px]">
                         <MoreVertical className="w-3 h-3 inline mr-0.5 stroke-[2.2]" />
                         더보기(⋮)
                       </span>{' '}
@@ -188,24 +195,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
                     </div>
                   </div>
 
+                  {/* Step 2 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       2
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      메뉴에서{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline">
-                        <Download className="w-3 h-3 inline mr-0.5 stroke-[2.2]" />
-                        홈 화면에 추가
-                      </span>{' '}
-                      또는{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline">
-                        앱 설치
-                      </span>{' '}
-                      버튼을 누르세요.
+                      메뉴에서 아래 항목을 누르세요:
+                      <div className="my-1 flex items-center gap-1.5 flex-wrap">
+                        <span className="inline-flex items-center gap-1 font-bold text-[#1B64DA] bg-[#E8F3FF] px-2 py-1 rounded-lg text-[12px] whitespace-nowrap shadow-xs">
+                          <Download className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
+                          홈 화면에 추가
+                        </span>
+                        <span className="text-[11px] text-[#8B95A1]">또는</span>
+                        <span className="inline-flex items-center font-bold text-[#1B64DA] bg-[#E8F3FF] px-2 py-1 rounded-lg text-[12px] whitespace-nowrap shadow-xs">
+                          앱 설치
+                        </span>
+                      </div>
                     </div>
                   </div>
 
+                  {/* Step 3 */}
                   <div className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
                       3
