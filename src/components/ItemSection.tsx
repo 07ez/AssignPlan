@@ -1,5 +1,5 @@
 import React from 'react'
-import { Video, FileText, ChevronRight, Circle, CheckCircle } from 'lucide-react'
+import { Video, FileText, ChevronRight, Check } from 'lucide-react'
 
 export interface ItemData {
   id: string
@@ -22,160 +22,95 @@ export const ItemSection: React.FC<ItemSectionProps> = ({
   onMoreClick,
 }) => {
   const isLecture = title === '강의'
-  const accentColor = '#0066cc'
+  const incompleteCount = items.filter((item) => !item.completed).length
 
   return (
-    /* store-utility-card: white, 1px hairline border, 18px radius, 24px padding */
-    <section
-      style={{
-        backgroundColor: '#ffffff',
-        border: '1px solid #e0e0e0',
-        borderRadius: '18px',
-        padding: '20px 20px 16px',
-      }}
-      className="w-full flex flex-col"
-    >
-      {/* Section header */}
-      <div className="flex items-center justify-between mb-3">
+    <section className="w-full bg-white rounded-[24px] p-5 border border-[#E5E8EB] shadow-[0_2px_10px_rgba(25,31,40,0.04)] flex flex-col">
+      {/* TDS Section Header */}
+      <div className="flex items-center justify-between pb-3.5 border-b border-[#F2F4F6]">
         <div className="flex items-center gap-2.5">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{
-              backgroundColor: 'rgba(0, 102, 204, 0.08)',
-            }}
-          >
+          <div className="w-9 h-9 rounded-xl bg-[#E8F3FF] flex items-center justify-center text-[#3182F6] shrink-0">
             {isLecture ? (
-              <Video className="w-4 h-4" style={{ color: accentColor, strokeWidth: 2 }} />
+              <Video className="w-[18px] h-[18px] stroke-[2.2]" />
             ) : (
-              <FileText className="w-4 h-4" style={{ color: accentColor, strokeWidth: 2 }} />
+              <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
             )}
           </div>
 
-          <span
-            style={{
-              color: '#1d1d1f',
-              fontSize: '17px',
-              fontWeight: 600,
-              letterSpacing: '-0.374px',
-              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-            }}
-          >
-            {title}
-          </span>
-
-          {items.length > 0 && (
-            <span
-              style={{
-                backgroundColor: accentColor,
-                color: '#ffffff',
-                fontSize: '11px',
-                fontWeight: 600,
-                borderRadius: '9999px',
-                padding: '1px 7px',
-                letterSpacing: '0',
-              }}
-            >
-              {items.filter((i) => !i.completed).length}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            <h2 className="text-[18px] font-bold text-[#191F28] tracking-tight">
+              {title}
+            </h2>
+            {items.length > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[12px] font-bold bg-[#E8F3FF] text-[#3182F6] tabular-nums">
+                {incompleteCount}
+              </span>
+            )}
+          </div>
         </div>
 
         <button
           onClick={onMoreClick}
-          className="flex items-center gap-0.5 cursor-pointer active:opacity-60 transition-opacity"
+          className="text-[#8B95A1] hover:text-[#4E5968] flex items-center gap-0.5 text-[13px] font-medium transition-colors cursor-pointer py-1 px-1.5 rounded-lg active:bg-[#F2F4F6]"
           aria-label={`${title} 더보기`}
-          style={{ color: accentColor }}
         >
-          <span style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '-0.12px' }}>
-            전체보기
-          </span>
-          <ChevronRight className="w-3.5 h-3.5" style={{ strokeWidth: 2 }} />
+          <span>더보기</span>
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Hairline divider */}
-      <div style={{ height: '1px', backgroundColor: '#f0f0f0', marginBottom: '4px' }} />
-
-      {/* Items */}
+      {/* Rows or Empty State */}
       {items.length === 0 ? (
-        <div className="py-8 flex flex-col items-center gap-2">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: '#f5f5f7' }}
-          >
+        <div className="py-9 flex flex-col items-center justify-center text-center">
+          <div className="w-12 h-12 rounded-full bg-[#F2F4F6] flex items-center justify-center text-[#B0B8C1] mb-2.5">
             {isLecture ? (
-              <Video className="w-5 h-5" style={{ color: '#7a7a7a', strokeWidth: 1.5 }} />
+              <Video className="w-6 h-6 stroke-[1.8]" />
             ) : (
-              <FileText className="w-5 h-5" style={{ color: '#7a7a7a', strokeWidth: 1.5 }} />
+              <FileText className="w-6 h-6 stroke-[1.8]" />
             )}
           </div>
-          <span
-            style={{
-              fontSize: '14px',
-              fontWeight: 400,
-              color: '#7a7a7a',
-              letterSpacing: '-0.224px',
-            }}
-          >
-            남은 {title} 없음
-          </span>
+          <p className="text-[15px] font-semibold text-[#4E5968] mb-0.5">
+            남은 {title}가 없어요
+          </p>
+          <p className="text-[13px] text-[#8B95A1]">
+            새로운 {title}를 등록하고 관리해 보세요
+          </p>
         </div>
       ) : (
-        <div className="flex flex-col">
-          {items.map((item, index) => (
-            <div key={item.id}>
-              <div className="py-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <button
-                    onClick={() => onToggleComplete(item.id)}
-                    className="cursor-pointer active:scale-90 transition-transform shrink-0"
-                    aria-label="완료 여부 변경"
-                  >
-                    {item.completed ? (
-                      <CheckCircle
-                        className="w-[22px] h-[22px]"
-                        style={{ color: accentColor, strokeWidth: 1.8 }}
-                      />
-                    ) : (
-                      <Circle
-                        className="w-[22px] h-[22px]"
-                        style={{ color: '#cccccc', strokeWidth: 1.8 }}
-                      />
-                    )}
-                  </button>
-
-                  <span
-                    className="truncate"
-                    style={{
-                      fontSize: '17px',
-                      fontWeight: 400,
-                      letterSpacing: '-0.374px',
-                      color: item.completed ? '#7a7a7a' : '#1d1d1f',
-                      textDecoration: item.completed ? 'line-through' : 'none',
-                      textDecorationColor: '#cccccc',
-                    }}
-                  >
-                    {item.title}
-                  </span>
-                </div>
+        <div className="flex flex-col divide-y divide-[#F2F4F6] mt-1">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="py-3.5 flex items-center justify-between gap-3 group transition-colors"
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* TDS Square Checkbox */}
+                <button
+                  onClick={() => onToggleComplete(item.id)}
+                  className={`w-[22px] h-[22px] rounded-[6px] flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                    item.completed
+                      ? 'bg-[#3182F6] text-white shadow-sm'
+                      : 'border-[1.5px] border-[#D1D6DB] bg-white hover:border-[#3182F6]'
+                  }`}
+                  aria-label="완료 여부 변경"
+                >
+                  {item.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                </button>
 
                 <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 400,
-                    color: '#7a7a7a',
-                    letterSpacing: '-0.12px',
-                    flexShrink: 0,
-                  }}
+                  className={`text-[15px] font-medium transition-all truncate ${
+                    item.completed
+                      ? 'line-through text-[#B0B8C1]'
+                      : 'text-[#191F28]'
+                  }`}
                 >
-                  {item.date.month}/{item.date.day}
+                  {item.title}
                 </span>
               </div>
 
-              {/* row divider */}
-              {index < items.length - 1 && (
-                <div style={{ height: '1px', backgroundColor: '#f0f0f0' }} />
-              )}
+              <span className="text-[13px] font-medium text-[#8B95A1] tabular-nums shrink-0 bg-[#F2F4F6] px-2 py-0.5 rounded-md">
+                {item.date.month}월 {item.date.day}일
+              </span>
             </div>
           ))}
         </div>

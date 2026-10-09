@@ -62,49 +62,27 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
   const monthsList = Array.from({ length: 12 }, (_, i) => i + 1)
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-5 pointer-events-none"
-      style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
-    >
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-[2px]">
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          transformOrigin: pickerOrigin,
-          backgroundColor: '#ffffff',
-          border: '1px solid #e0e0e0',
-          borderRadius: '18px',
-          padding: '20px',
-          boxShadow: 'rgba(0,0,0,0.22) 3px 5px 30px 0',
-          width: '100%',
-          maxWidth: '340px',
-        }}
-        className={`flex flex-col gap-4 pointer-events-auto ${
+        style={{ transformOrigin: pickerOrigin }}
+        className={`w-full max-w-[360px] bg-white rounded-[24px] p-6 shadow-[0_12px_36px_rgba(25,31,40,0.18)] border border-[#E5E8EB] flex flex-col gap-4 ${
           isClosing ? 'animate-popover-out' : 'animate-popover-in'
         }`}
       >
-        {/* Calendar header */}
-        <div className="flex items-center justify-between">
+        {/* Month Selector Header */}
+        <div className="flex items-center justify-between pb-2">
           <button
             onClick={onToggleWheelPicker}
-            className="flex items-center gap-1.5 cursor-pointer active:opacity-60 transition-opacity"
-            style={{ color: '#0066cc' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl hover:bg-[#F2F4F6] transition-colors cursor-pointer"
           >
-            <span
-              style={{
-                fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-                fontSize: '17px',
-                fontWeight: 600,
-                letterSpacing: '-0.374px',
-                color: '#1d1d1f',
-              }}
-            >
+            <span className="text-[18px] font-bold text-[#191F28] tracking-tight tabular-nums">
               {currentYear}년 {currentMonth}월
             </span>
             <ChevronDown
-              className={`w-4 h-4 transition-transform duration-200 ${
+              className={`w-4 h-4 text-[#4E5968] transition-transform duration-200 ${
                 isWheelPickerMode ? 'rotate-180' : ''
               }`}
-              style={{ color: '#0066cc', strokeWidth: 2 }}
             />
           </button>
 
@@ -113,78 +91,39 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
               <button
                 onClick={onPrevMonth}
                 disabled={currentYear === today.year && currentMonth <= today.month}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '9999px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#1d1d1f',
-                }}
-                className="hover:bg-[#f5f5f7] disabled:opacity-20 disabled:cursor-not-allowed transition-colors active:scale-95"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] disabled:opacity-20 disabled:cursor-not-allowed active:scale-95 transition-all cursor-pointer"
+                aria-label="이전 달"
               >
-                <ChevronLeft className="w-4 h-4" style={{ strokeWidth: 2 }} />
+                <ChevronLeft className="w-5 h-5 stroke-[2]" />
               </button>
               <button
                 onClick={onNextMonth}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '9999px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#1d1d1f',
-                }}
-                className="hover:bg-[#f5f5f7] transition-colors active:scale-95"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] active:scale-95 transition-all cursor-pointer"
+                aria-label="다음 달"
               >
-                <ChevronRight className="w-4 h-4" style={{ strokeWidth: 2 }} />
+                <ChevronRight className="w-5 h-5 stroke-[2]" />
               </button>
             </div>
           )}
         </div>
 
         {isWheelPickerMode ? (
-          /* Wheel picker */
+          /* Wheel Picker Mode */
           <div className="flex justify-center items-center gap-2 py-2 relative h-[180px]">
-            <div
-              style={{
-                position: 'absolute',
-                left: '8px',
-                right: '8px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                height: '38px',
-                backgroundColor: '#f5f5f7',
-                borderRadius: '8px',
-                pointerEvents: 'none',
-              }}
-            />
+            <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-10 bg-[#F2F4F6] rounded-xl pointer-events-none" />
+
             <div
               onScroll={onYearScroll}
-              className="flex-1 h-full overflow-y-auto py-[71px] text-center snap-y snap-mandatory scrollbar-none"
+              className="flex-1 h-full overflow-y-auto py-[70px] text-center snap-y snap-mandatory scrollbar-none"
             >
               {yearsList.map((y) => (
                 <div
                   key={y}
-                  style={{
-                    height: '38px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: y === currentYear ? '15px' : '14px',
-                    fontWeight: y === currentYear ? 600 : 400,
-                    color: y === currentYear ? '#1d1d1f' : '#7a7a7a',
-                    letterSpacing: '-0.224px',
-                    transform: y === currentYear ? 'scale(1.05)' : 'scale(1)',
-                    transition: 'all 0.1s ease',
-                  }}
-                  className="snap-center"
+                  className={`h-10 flex items-center justify-center snap-center text-[15px] font-semibold transition-all ${
+                    y === currentYear
+                      ? 'text-[#3182F6] font-bold text-[17px] scale-105'
+                      : 'text-[#8B95A1]'
+                  }`}
                 >
                   {y}년
                 </div>
@@ -193,27 +132,20 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
 
             <div
               onScroll={onMonthScroll}
-              className="flex-1 h-full overflow-y-auto py-[71px] text-center snap-y snap-mandatory scrollbar-none"
+              className="flex-1 h-full overflow-y-auto py-[70px] text-center snap-y snap-mandatory scrollbar-none"
             >
               {monthsList.map((m) => {
                 const isDisabled = currentYear === today.year && m < today.month
                 return (
                   <div
                     key={m}
-                    style={{
-                      height: '38px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: m === currentMonth ? '15px' : '14px',
-                      fontWeight: m === currentMonth ? 600 : 400,
-                      color: isDisabled ? '#cccccc' : m === currentMonth ? '#1d1d1f' : '#7a7a7a',
-                      opacity: isDisabled ? 0.4 : 1,
-                      letterSpacing: '-0.224px',
-                      transform: m === currentMonth ? 'scale(1.05)' : 'scale(1)',
-                      transition: 'all 0.1s ease',
-                    }}
-                    className="snap-center"
+                    className={`h-10 flex items-center justify-center snap-center text-[15px] font-semibold transition-all ${
+                      isDisabled
+                        ? 'text-[#D1D6DB] opacity-40'
+                        : m === currentMonth
+                        ? 'text-[#3182F6] font-bold text-[17px] scale-105'
+                        : 'text-[#8B95A1]'
+                    }`}
                   >
                     {m}월
                   </div>
@@ -222,25 +154,26 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
             </div>
           </div>
         ) : (
-          /* Calendar grid */
+          /* Calendar Grid Mode */
           <div
             key={`${currentYear}-${currentMonth}`}
-            className={slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'}
+            className={
+              slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'
+            }
           >
-            {/* Day headers */}
-            <div
-              className="grid grid-cols-7 text-center py-1 mb-1"
-              style={{ fontSize: '12px', fontWeight: 400, color: '#7a7a7a', letterSpacing: '-0.12px' }}
-            >
-              {['일', '월', '화', '수', '목', '금', '토'].map((d) => (
-                <span key={d}>{d}</span>
-              ))}
+            <div className="grid grid-cols-7 text-center text-[12px] font-semibold text-[#8B95A1] py-1 mb-1">
+              <span>일</span>
+              <span>월</span>
+              <span>화</span>
+              <span>수</span>
+              <span>목</span>
+              <span>금</span>
+              <span>토</span>
             </div>
 
-            {/* Day grid */}
-            <div className="grid grid-cols-7 text-center gap-y-1">
-              {emptyDaysBefore.map((_, i) => (
-                <div key={`eb-${i}`} className="w-full aspect-square" />
+            <div className="grid grid-cols-7 text-center gap-y-1 text-[14px]">
+              {emptyDaysBefore.map((_, index) => (
+                <div key={`empty-b-${index}`} className="w-9 h-9" />
               ))}
 
               {daysInMonthArray.map((day) => {
@@ -259,33 +192,22 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                     <button
                       disabled={disabled}
                       onClick={() => {
-                        onSelectDate({ year: currentYear, month: currentMonth, day })
+                        onSelectDate({
+                          year: currentYear,
+                          month: currentMonth,
+                          day,
+                        })
                         onClose()
                       }}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '9999px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        border: 'none',
-                        fontSize: '14px',
-                        fontWeight: isSelected ? 600 : isToday ? 600 : 400,
-                        letterSpacing: '-0.224px',
-                        backgroundColor: isSelected ? '#0066cc' : 'transparent',
-                        color: disabled
-                          ? '#cccccc'
+                      className={`w-9 h-9 rounded-full flex items-center justify-center font-medium transition-all cursor-pointer ${
+                        disabled
+                          ? 'text-[#D1D6DB] cursor-not-allowed opacity-40'
                           : isSelected
-                          ? '#ffffff'
+                          ? 'bg-[#3182F6] text-white font-bold shadow-sm'
                           : isToday
-                          ? '#0066cc'
-                          : '#1d1d1f',
-                        opacity: disabled ? 0.3 : 1,
-                        cursor: disabled ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.12s ease',
-                      }}
-                      className={!disabled && !isSelected ? 'hover:bg-[#f5f5f7] active:scale-95' : ''}
+                          ? 'text-[#3182F6] font-bold bg-[#E8F3FF]'
+                          : 'text-[#191F28] hover:bg-[#F2F4F6] active:scale-95'
+                      }`}
                     >
                       {day}
                     </button>
@@ -293,31 +215,19 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                 )
               })}
 
-              {emptyDaysAfter.map((_, i) => (
-                <div key={`ea-${i}`} className="w-full aspect-square" />
+              {emptyDaysAfter.map((_, index) => (
+                <div key={`empty-a-${index}`} className="w-9 h-9" />
               ))}
             </div>
           </div>
         )}
 
-        {/* Close button */}
+        {/* Close Button */}
         <button
           onClick={onClose}
-          style={{
-            width: '100%',
-            padding: '11px',
-            borderRadius: '9999px',
-            backgroundColor: '#f5f5f7',
-            color: '#1d1d1f',
-            fontSize: '14px',
-            fontWeight: 400,
-            letterSpacing: '-0.224px',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-          className="active:scale-95 transition-transform"
+          className="w-full h-12 bg-[#F2F4F6] hover:bg-[#E5E8EB] active:scale-[0.98] text-[#191F28] font-bold text-[15px] rounded-xl transition-all cursor-pointer mt-1"
         >
-          닫기
+          완료
         </button>
       </div>
     </div>

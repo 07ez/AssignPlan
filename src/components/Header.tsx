@@ -17,180 +17,98 @@ export const Header: React.FC<HeaderProps> = ({
   onSettingsClick,
 }) => {
   return (
-    <header className="relative z-40">
-      {/* Global Nav — Apple pure black bar */}
-      <div
-        style={{ backgroundColor: '#000000', height: '44px' }}
-        className="flex items-center justify-between px-4"
-      >
-        <button
-          onClick={onSearchClick}
-          className="flex items-center justify-center w-8 h-8 active:scale-95 transition-transform cursor-pointer"
-          aria-label="검색"
-        >
-          <Search
-            className="w-[17px] h-[17px]"
-            style={{ color: '#f5f5f7', strokeWidth: 2 }}
-          />
-        </button>
+    <header className="relative z-40 bg-white border-b border-[#F2F4F6]">
+      {/* TDS TopBar (56px) */}
+      <div className="h-14 px-5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#3182F6]" />
+          <h1 className="text-[20px] font-bold text-[#191F28] tracking-tight">
+            과제와 강의
+          </h1>
+        </div>
 
-        <span
-          className="type-nav-link tracking-wide font-medium"
-          style={{ color: '#f5f5f7', fontSize: '14px', fontWeight: 600, letterSpacing: '0.01em' }}
-        >
-          Assign Plan
-        </span>
-
-        <div className="flex items-center gap-3">
+        {/* Right Icon Actions */}
+        <div className="flex items-center gap-1">
           <button
-            onClick={onSettingsClick}
-            className="flex items-center justify-center w-8 h-8 active:scale-95 transition-transform cursor-pointer"
-            aria-label="설정"
+            onClick={onSearchClick}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] active:scale-95 transition-all cursor-pointer"
+            aria-label="검색"
           >
-            <Settings
-              className="w-[17px] h-[17px]"
-              style={{ color: '#f5f5f7', strokeWidth: 2 }}
-            />
+            <Search className="w-5 h-5 stroke-[2]" />
           </button>
 
           <button
+            onClick={onSettingsClick}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] active:scale-95 transition-all cursor-pointer"
+            aria-label="설정"
+          >
+            <Settings className="w-5 h-5 stroke-[2]" />
+          </button>
+
+          {/* Toss Blue Add Button */}
+          <button
             onClick={onToggleMenu}
-            className="flex items-center justify-center w-8 h-8 active:scale-95 transition-transform cursor-pointer"
+            className="ml-1 h-9 px-3.5 bg-[#3182F6] hover:bg-[#1b64da] text-white rounded-full flex items-center gap-1.5 text-[14px] font-semibold active:scale-95 transition-all cursor-pointer shadow-sm"
             aria-label="추가"
           >
             <Plus
-              className={`w-[19px] h-[19px] transition-transform duration-200 ${
+              className={`w-4 h-4 stroke-[2.5] transition-transform duration-200 ${
                 showMenu ? 'rotate-45' : ''
               }`}
-              style={{ color: '#f5f5f7', strokeWidth: 2.2 }}
             />
+            <span>추가</span>
           </button>
         </div>
       </div>
 
-      {/* Sub Nav — Frosted parchment strip */}
-      <div
-        style={{
-          backgroundColor: 'rgba(245, 245, 247, 0.88)',
-          backdropFilter: 'saturate(180%) blur(20px)',
-          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-          borderBottom: '1px solid rgba(0,0,0,0.08)',
-          height: '44px',
-        }}
-        className="flex items-center justify-between px-4"
-      >
-        <span
-          style={{
-            color: '#1d1d1f',
-            fontSize: '17px',
-            fontWeight: 600,
-            letterSpacing: '-0.374px',
-            fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-          }}
-        >
-          학습
-        </span>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onOpenModal('강의')}
-            style={{
-              backgroundColor: 'transparent',
-              color: '#0066cc',
-              fontSize: '14px',
-              fontWeight: 400,
-              letterSpacing: '-0.224px',
-            }}
-            className="cursor-pointer active:opacity-60 transition-opacity"
-          >
-            강의 추가
-          </button>
-          <span style={{ color: '#e0e0e0', fontSize: '12px' }}>|</span>
-          <button
-            onClick={() => onOpenModal('과제')}
-            style={{
-              backgroundColor: '#0066cc',
-              color: '#ffffff',
-              fontSize: '14px',
-              fontWeight: 400,
-              letterSpacing: '-0.224px',
-              padding: '6px 14px',
-              borderRadius: '9999px',
-            }}
-            className="cursor-pointer active:scale-95 transition-transform"
-          >
-            과제 추가
-          </button>
-        </div>
-      </div>
-
-      {/* Add menu dropdown */}
+      {/* TDS Dropdown Menu */}
       {showMenu && (
         <div
-          style={{
-            position: 'absolute',
-            right: '16px',
-            top: '96px',
-            width: '180px',
-            backgroundColor: 'rgba(250, 250, 252, 0.96)',
-            backdropFilter: 'saturate(180%) blur(20px)',
-            WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-            border: '1px solid rgba(0,0,0,0.08)',
-            borderRadius: '18px',
-            padding: '6px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-            zIndex: 50,
-          }}
-          className="flex flex-col gap-0.5 animate-popover-in"
+          className="absolute right-5 top-16 w-52 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
           <button
             onClick={() => onOpenModal('강의')}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl cursor-pointer active:bg-black/5 transition-colors"
-            style={{ color: '#1d1d1f' }}
+            className="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-left hover:bg-[#F2F4F6] active:bg-[#E5E8EB] transition-colors cursor-pointer"
           >
-            <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(0, 102, 204, 0.1)' }}
-            >
-              <Video className="w-3.5 h-3.5" style={{ color: '#0066cc', strokeWidth: 2 }} />
+            <div className="w-8 h-8 rounded-full bg-[#E8F3FF] flex items-center justify-center text-[#3182F6] shrink-0">
+              <Video className="w-4 h-4 stroke-[2.2]" />
             </div>
-            <span style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.224px' }}>
-              강의
-            </span>
+            <div className="flex flex-col">
+              <span className="text-[15px] font-semibold text-[#191F28]">
+                강의 추가하기
+              </span>
+              <span className="text-[12px] text-[#8B95A1]">
+                수강할 강의 일정
+              </span>
+            </div>
           </button>
 
           <button
             onClick={() => onOpenModal('과제')}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl cursor-pointer active:bg-black/5 transition-colors"
-            style={{ color: '#1d1d1f' }}
+            className="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-left hover:bg-[#F2F4F6] active:bg-[#E5E8EB] transition-colors cursor-pointer"
           >
-            <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(0, 102, 204, 0.1)' }}
-            >
-              <FileText className="w-3.5 h-3.5" style={{ color: '#0066cc', strokeWidth: 2 }} />
+            <div className="w-8 h-8 rounded-full bg-[#E8F3FF] flex items-center justify-center text-[#3182F6] shrink-0">
+              <FileText className="w-4 h-4 stroke-[2.2]" />
             </div>
-            <span style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.224px' }}>
-              과제
-            </span>
+            <div className="flex flex-col">
+              <span className="text-[15px] font-semibold text-[#191F28]">
+                과제 추가하기
+              </span>
+              <span className="text-[12px] text-[#8B95A1]">
+                제출할 과제 일정
+              </span>
+            </div>
           </button>
 
-          <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '2px 8px' }} />
+          <div className="h-[1px] bg-[#F2F4F6] my-1" />
 
           <button
             onClick={onToggleMenu}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl cursor-pointer active:bg-black/5 transition-colors"
-            style={{ color: '#7a7a7a' }}
+            className="flex items-center gap-3 w-full px-3.5 py-2 rounded-xl text-left hover:bg-[#F2F4F6] active:bg-[#E5E8EB] transition-colors cursor-pointer text-[#8B95A1]"
           >
-            <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(0,0,0,0.04)' }}
-            >
-              <Repeat className="w-3.5 h-3.5" style={{ color: '#7a7a7a', strokeWidth: 2 }} />
-            </div>
-            <span style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.224px' }}>
-              반복
-            </span>
+            <Repeat className="w-4 h-4 stroke-[2] ml-2" />
+            <span className="text-[13px] font-medium">반복 일정 설정</span>
           </button>
         </div>
       )}

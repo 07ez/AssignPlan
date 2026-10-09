@@ -18,157 +18,62 @@ export const ChangelogDrawer: React.FC<ChangelogDrawerProps> = ({
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      style={{ backgroundColor: '#ffffff', color: '#1d1d1f' }}
-      className={`fixed inset-0 z-[70] flex flex-col w-full max-w-[480px] mx-auto ${
+      className={`fixed inset-0 z-[70] bg-[#F2F4F6] text-[#191F28] flex flex-col w-full max-w-[480px] mx-auto ${
         isClosing ? 'animate-slide-out-right' : 'animate-slide-in-right'
       }`}
     >
-      {/* Header — matches sub-nav-frosted style */}
-      <div
-        style={{
-          backgroundColor: 'rgba(245, 245, 247, 0.88)',
-          backdropFilter: 'saturate(180%) blur(20px)',
-          WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-          borderBottom: '1px solid rgba(0,0,0,0.08)',
-          height: '52px',
-          padding: '0 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          flexShrink: 0,
-        }}
-      >
+      {/* TDS TopBar */}
+      <header className="h-14 px-4 bg-white border-b border-[#F2F4F6] flex items-center gap-3 shrink-0">
         <button
           onClick={onClose}
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            backgroundColor: '#1d1d1f',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: 'none',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}
-          className="active:scale-95 transition-transform"
+          className="w-10 h-10 rounded-full hover:bg-[#F2F4F6] active:scale-95 flex items-center justify-center text-[#191F28] transition-all cursor-pointer"
+          aria-label="뒤로가기"
         >
-          <ChevronLeft className="w-4 h-4" style={{ color: '#ffffff', strokeWidth: 2.5 }} />
+          <ChevronLeft className="w-6 h-6 stroke-[2]" />
         </button>
-
-        <h2
-          style={{
-            fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-            fontSize: '17px',
-            fontWeight: 600,
-            letterSpacing: '-0.374px',
-            color: '#1d1d1f',
-          }}
-        >
+        <h2 className="text-[18px] font-bold text-[#191F28] tracking-tight">
           업데이트 내역
         </h2>
-      </div>
+      </header>
 
-      {/* Content */}
-      <div
-        style={{ backgroundColor: '#f5f5f7', flex: 1, overflowY: 'auto', padding: '24px 20px' }}
-        className="flex flex-col gap-4"
-      >
+      {/* Changelog Card List */}
+      <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
         {changelogData.map((item, index) => (
           <div
             key={item.version}
-            style={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e0e0e0',
-              borderRadius: '18px',
-              padding: '20px',
-            }}
-            className="flex flex-col gap-3"
+            className="bg-white rounded-[22px] p-5 border border-[#E5E8EB] shadow-[0_2px_8px_rgba(25,31,40,0.04)] flex flex-col gap-3"
           >
             <div className="flex items-center justify-between">
-              <span
-                style={{
-                  fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-                  fontSize: '17px',
-                  fontWeight: 600,
-                  letterSpacing: '-0.374px',
-                  color: '#1d1d1f',
-                }}
-              >
-                {item.version}
-              </span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 400,
-                  color: '#7a7a7a',
-                  letterSpacing: '-0.12px',
-                }}
-              >
+              <div className="flex items-center gap-2">
+                <span className="text-[17px] font-bold text-[#191F28] tracking-tight">
+                  {item.version}
+                </span>
+                {index === 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#E8F3FF] text-[#3182F6]">
+                    최신
+                  </span>
+                )}
+              </div>
+              <span className="text-[13px] text-[#8B95A1] font-medium tabular-nums">
                 {item.date}
               </span>
             </div>
 
-            <div style={{ height: '1px', backgroundColor: '#f0f0f0' }} />
+            <div className="h-[1px] bg-[#F2F4F6]" />
 
             <ul className="flex flex-col gap-2">
               {item.changes.map((change, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2"
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    letterSpacing: '-0.224px',
-                    color: '#1d1d1f',
-                    lineHeight: '1.43',
-                  }}
+                  className="text-[14px] text-[#4E5968] flex items-start gap-2 leading-relaxed"
                 >
-                  <span style={{ color: '#0066cc', flexShrink: 0, marginTop: '1px' }}>•</span>
+                  <span className="text-[#3182F6] font-bold mt-0.5">•</span>
                   <span>{change}</span>
                 </li>
               ))}
             </ul>
-
-            {index === 0 && (
-              <div
-                style={{
-                  backgroundColor: 'rgba(0, 102, 204, 0.08)',
-                  borderRadius: '9999px',
-                  padding: '4px 12px',
-                  display: 'inline-flex',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: '#0066cc',
-                    letterSpacing: '0',
-                  }}
-                >
-                  최신
-                </span>
-              </div>
-            )}
           </div>
         ))}
-
-        {/* Footer note */}
-        <p
-          style={{
-            fontSize: '12px',
-            fontWeight: 400,
-            color: '#7a7a7a',
-            letterSpacing: '-0.12px',
-            textAlign: 'center',
-            paddingBottom: '8px',
-          }}
-        >
-          Assign Plan — 모든 버전 기록
-        </p>
       </div>
     </div>
   )

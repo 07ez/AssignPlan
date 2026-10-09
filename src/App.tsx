@@ -60,7 +60,7 @@ export default function App() {
   const dateBadgeRef = useRef<HTMLSpanElement | null>(null)
 
   // 토스트 메시지 출력
-  const triggerToast = (msg = '아직 구현중인 기능입니다.') => {
+  const triggerToast = (msg = '아직 준비 중인 기능이에요') => {
     setToastMessage(msg)
     setShowToast(true)
     setTimeout(() => setShowToast(false), 2000)
@@ -184,105 +184,60 @@ export default function App() {
     }
   }
 
+  const totalIncomplete =
+    lectures.filter((l) => !l.completed).length +
+    assignments.filter((a) => !a.completed).length
+
   return (
-    <div
-      style={{ backgroundColor: '#f5f5f7', maxWidth: '480px' }}
-      className="w-full min-h-screen flex flex-col relative overflow-hidden select-none mx-auto"
-    >
-      {/* 상단 헤더 */}
+    <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] text-[#191F28] flex flex-col relative overflow-hidden select-none mx-auto shadow-xl">
+      {/* 상단 헤더 (TDS TopBar) */}
       <Header
         showMenu={showMenu}
         onToggleMenu={() => setShowMenu(!showMenu)}
         onOpenModal={handleOpenModal}
-        onSearchClick={() => triggerToast('검색 기능 준비중입니다.')}
+        onSearchClick={() => triggerToast('검색 기능은 준비 중이에요')}
         onSettingsClick={() => setShowSettingsMenu(!showSettingsMenu)}
       />
 
-      {/* 설정 팝업 메뉴 — Apple utility card style */}
+      {/* 설정 팝업 메뉴 (TDS Menu Popover) */}
       {showSettingsMenu && (
         <div
-          style={{
-            position: 'absolute',
-            right: '16px',
-            top: '96px',
-            width: '220px',
-            backgroundColor: 'rgba(250, 250, 252, 0.96)',
-            backdropFilter: 'saturate(180%) blur(20px)',
-            WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-            border: '1px solid rgba(0,0,0,0.08)',
-            borderRadius: '18px',
-            padding: '6px',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-            zIndex: 50,
-          }}
-          className="flex flex-col gap-0.5 animate-popover-in"
+          className="absolute right-5 top-16 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
-          {/* Alarm row */}
-          <div
-            className="flex items-center justify-between px-3 py-2.5 rounded-xl"
-          >
-            <div className="flex items-center gap-2.5">
-              <Bell
-                className="w-4 h-4"
-                style={{ color: '#1d1d1f', strokeWidth: 2 }}
-              />
-              <span
-                style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.224px', color: '#1d1d1f' }}
-              >
-                알람
-              </span>
+          {/* 알람 항목 */}
+          <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-[#F2F4F6] transition-colors">
+            <div className="flex items-center gap-2.5 text-[#191F28]">
+              <Bell className="w-4 h-4 stroke-[2.2] text-[#4E5968]" />
+              <span className="text-[14px] font-semibold">알림 받기</span>
             </div>
+            {/* TDS Switch Component */}
             <button
               onClick={() => setAlarmEnabled(!alarmEnabled)}
-              style={{
-                width: '40px',
-                height: '24px',
-                borderRadius: '9999px',
-                padding: '2px',
-                backgroundColor: alarmEnabled ? '#0066cc' : '#e0e0e0',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'background-color 0.2s ease',
-              }}
+              className={`w-11 h-6.5 rounded-full p-0.5 flex items-center transition-colors cursor-pointer ${
+                alarmEnabled ? 'bg-[#3182F6]' : 'bg-[#D1D6DB]'
+              }`}
             >
               <div
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '9999px',
-                  backgroundColor: '#ffffff',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
-                  transform: alarmEnabled ? 'translateX(16px)' : 'translateX(0)',
-                  transition: 'transform 0.2s ease',
-                }}
+                className={`bg-white w-5.5 h-5.5 rounded-full shadow-md transform transition-transform duration-200 ${
+                  alarmEnabled ? 'translate-x-4.5' : 'translate-x-0'
+                }`}
               />
             </button>
           </div>
 
-          {/* Hairline */}
-          <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '0 8px' }} />
+          <div className="h-[1px] bg-[#F2F4F6] my-0.5" />
 
-          {/* Version / Changelog */}
+          {/* 버전 / 업데이트 내역 항목 */}
           <button
             onClick={openChangelog}
-            className="flex items-center justify-between w-full px-3 py-2.5 rounded-xl cursor-pointer active:bg-black/5 transition-colors"
+            className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl hover:bg-[#F2F4F6] active:bg-[#E5E8EB] transition-colors cursor-pointer text-[#191F28]"
           >
             <div className="flex items-center gap-2.5">
-              <Info
-                className="w-4 h-4"
-                style={{ color: '#1d1d1f', strokeWidth: 2 }}
-              />
-              <span
-                style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '-0.224px', color: '#1d1d1f' }}
-              >
-                버전
-              </span>
+              <Info className="w-4 h-4 stroke-[2.2] text-[#4E5968]" />
+              <span className="text-[14px] font-semibold">버전 정보</span>
             </div>
-            <span
-              style={{ fontSize: '12px', fontWeight: 400, color: '#0066cc', letterSpacing: '-0.12px' }}
-            >
+            <span className="text-[12px] font-bold text-[#3182F6] tabular-nums bg-[#E8F3FF] px-2 py-0.5 rounded-full">
               v1.0.5
             </span>
           </button>
@@ -290,19 +245,48 @@ export default function App() {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 overflow-y-auto px-4 pt-5 pb-12 flex flex-col gap-3">
+      <main className="flex-1 overflow-y-auto px-4 pt-4 pb-12 flex flex-col gap-3.5">
+        {/* TDS Summary Banner */}
+        <div className="w-full bg-white rounded-[24px] p-5 border border-[#E5E8EB] shadow-[0_2px_10px_rgba(25,31,40,0.04)] flex items-center justify-between">
+          <div>
+            <span className="text-[13px] font-semibold text-[#8B95A1]">
+              오늘의 학업 현황
+            </span>
+            <h3 className="text-[19px] font-bold text-[#191F28] mt-0.5 tracking-tight">
+              {totalIncomplete === 0 ? (
+                '모든 일정을 끝냈어요 🎉'
+              ) : (
+                <>
+                  남은 일정이{' '}
+                  <span className="text-[#3182F6] tabular-nums">
+                    {totalIncomplete}개
+                  </span>{' '}
+                  있어요
+                </>
+              )}
+            </h3>
+          </div>
+
+          <button
+            onClick={() => handleOpenModal('강의')}
+            className="h-10 px-4 rounded-xl bg-[#E8F3FF] text-[#3182F6] hover:bg-[#d8eaff] active:scale-95 text-[14px] font-bold transition-all cursor-pointer flex items-center gap-1 shrink-0"
+          >
+            <span>+ 추가</span>
+          </button>
+        </div>
+
         <ItemSection
           title="강의"
           items={lectures}
           onToggleComplete={(id) => handleToggleComplete(id, '강의')}
-          onMoreClick={() => triggerToast()}
+          onMoreClick={() => triggerToast('강의 상세 목록을 준비하고 있어요')}
         />
 
         <ItemSection
           title="과제"
           items={assignments}
           onToggleComplete={(id) => handleToggleComplete(id, '과제')}
-          onMoreClick={() => triggerToast()}
+          onMoreClick={() => triggerToast('과제 상세 목록을 준비하고 있어요')}
         />
       </main>
 

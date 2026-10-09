@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { X, Check } from 'lucide-react'
+import { X, Calendar } from 'lucide-react'
 
 interface DateType {
   year: number
@@ -38,6 +38,8 @@ export const AddModal: React.FC<AddModalProps> = ({
 }) => {
   const [translateY, setTranslateY] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [isInputFocused, setIsInputFocused] = useState(false)
+  const [isMemoFocused, setIsMemoFocused] = useState(false)
   const startYRef = useRef(0)
 
   if (!show) return null
@@ -63,212 +65,127 @@ export const AddModal: React.FC<AddModalProps> = ({
   }
 
   return (
-    /* Backdrop */
     <div
       onClick={onClose}
-      className={`fixed inset-0 z-50 flex items-end justify-center ${
+      className={`fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-[2px] ${
         isClosing ? 'animate-backdrop-out' : 'animate-backdrop-in'
       }`}
-      style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
     >
-      {/* Sheet */}
+      {/* TDS BottomSheet Container */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           transform: `translateY(${translateY}px)`,
-          transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0, 0, 0.2, 1)',
-          backgroundColor: '#ffffff',
-          borderTopLeftRadius: '20px',
-          borderTopRightRadius: '20px',
-          borderTop: '1px solid #e0e0e0',
-          width: '100%',
-          maxWidth: '480px',
-          padding: '0 0 40px 0',
-          boxShadow: 'rgba(0,0,0,0.22) 3px 5px 30px 0',
+          transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
-        className={`flex flex-col touch-none select-none ${
-          isClosing ? 'animate-modal-down' : 'animate-modal-up'
+        className={`w-full max-w-[480px] bg-white rounded-t-[28px] px-6 pt-3 pb-8 flex flex-col gap-5 shadow-[0_-8px_32px_rgba(25,31,40,0.12)] touch-none select-none ${
+          isClosing ? 'animate-sheet-down' : 'animate-sheet-up'
         }`}
       >
-        {/* Drag handle */}
+        {/* Drag Handle */}
         <div
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          className="w-full pt-3 pb-2 flex justify-center cursor-grab active:cursor-grabbing"
+          className="w-full pt-1 pb-1 flex justify-center cursor-grab active:cursor-grabbing"
         >
-          <div
-            style={{
-              width: '36px',
-              height: '5px',
-              borderRadius: '9999px',
-              backgroundColor: '#e0e0e0',
-            }}
-          />
+          <div className="w-10 h-1 rounded-full bg-[#D1D6DB]" />
         </div>
 
-        {/* Header row */}
-        <div className="flex items-center justify-between px-5 py-3">
-          {/* Close — dark utility button */}
+        {/* Sheet Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[20px] font-bold text-[#191F28] tracking-tight">
+              {modalType} 추가하기
+            </h2>
+            <p className="text-[13px] text-[#8B95A1] mt-0.5">
+              새로운 {modalType}의 일정과 메모를 등록해 보세요
+            </p>
+          </div>
+
           <button
             onClick={onClose}
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              backgroundColor: '#1d1d1f',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              border: 'none',
-            }}
-            className="active:scale-95 transition-transform"
+            className="w-9 h-9 rounded-full bg-[#F2F4F6] text-[#4E5968] hover:bg-[#E5E8EB] active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+            aria-label="닫기"
           >
-            <X className="w-4 h-4" style={{ color: '#ffffff', strokeWidth: 2.2 }} />
-          </button>
-
-          <h2
-            style={{
-              fontFamily: '"SF Pro Display", system-ui, -apple-system, sans-serif',
-              fontSize: '17px',
-              fontWeight: 600,
-              letterSpacing: '-0.374px',
-              color: '#1d1d1f',
-            }}
-          >
-            {modalType} 추가
-          </h2>
-
-          {/* Save — primary pill button */}
-          <button
-            onClick={onSave}
-            disabled={!itemTitle.trim()}
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '9999px',
-              backgroundColor: itemTitle.trim() ? '#0066cc' : '#f5f5f7',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: itemTitle.trim() ? 'pointer' : 'not-allowed',
-              border: 'none',
-            }}
-            className="transition-all active:scale-95"
-          >
-            <Check
-              className="w-4 h-4"
-              style={{
-                color: itemTitle.trim() ? '#ffffff' : '#cccccc',
-                strokeWidth: 2.5,
-              }}
-            />
+            <X className="w-5 h-5 stroke-[2]" />
           </button>
         </div>
 
-        {/* Hairline */}
-        <div style={{ height: '1px', backgroundColor: '#f0f0f0', marginBottom: '4px' }} />
-
-        {/* Form fields */}
-        <div className="flex flex-col gap-2 px-5 mt-3">
-          {/* Title input */}
+        {/* Form Fields */}
+        <div className="flex flex-col gap-3">
+          {/* Title Input (TDS TextField) */}
           <div
-            style={{
-              backgroundColor: '#f5f5f7',
-              borderRadius: '11px',
-              padding: '14px 16px',
-            }}
+            className={`h-13 rounded-2xl px-4 flex items-center transition-all border ${
+              isInputFocused
+                ? 'bg-white border-[#3182F6] ring-2 ring-[#3182F6]/15'
+                : 'bg-[#F2F4F6] border-transparent hover:border-[#D1D6DB]'
+            }`}
           >
             <input
               type="text"
-              placeholder={modalType === '강의' ? '강의명을 입력하세요' : '과제명을 입력하세요'}
+              placeholder={
+                modalType === '강의'
+                  ? '강의명을 입력해 주세요'
+                  : '과제명을 입력해 주세요'
+              }
               value={itemTitle}
               onChange={(e) => setItemTitle(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                fontSize: '17px',
-                fontWeight: 400,
-                letterSpacing: '-0.374px',
-                color: '#1d1d1f',
-              }}
-              className="placeholder-[#7a7a7a]"
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
+              className="w-full bg-transparent text-[16px] font-medium text-[#191F28] placeholder-[#8B95A1] focus:outline-none"
             />
           </div>
 
-          {/* Date selector */}
+          {/* Date Picker Trigger Row */}
           <div
             onClick={onToggleDatePicker}
-            style={{
-              backgroundColor: '#f5f5f7',
-              borderRadius: '11px',
-              padding: '14px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              cursor: 'pointer',
-            }}
-            className="active:bg-[#e8e8ea] transition-colors"
+            className="h-13 rounded-2xl px-4 bg-[#F2F4F6] hover:bg-[#E5E8EB] active:scale-[0.99] flex items-center justify-between cursor-pointer transition-all border border-transparent"
           >
-            <span
-              style={{
-                fontSize: '17px',
-                fontWeight: 400,
-                letterSpacing: '-0.374px',
-                color: '#1d1d1f',
-              }}
-            >
-              날짜
-            </span>
+            <div className="flex items-center gap-2.5 text-[#4E5968]">
+              <Calendar className="w-5 h-5 text-[#8B95A1]" />
+              <span className="text-[15px] font-medium">마감 날짜</span>
+            </div>
+
             <span
               ref={dateBadgeRef}
-              style={{
-                fontSize: '14px',
-                fontWeight: 400,
-                letterSpacing: '-0.224px',
-                color: '#0066cc',
-                backgroundColor: 'rgba(0, 102, 204, 0.08)',
-                padding: '4px 12px',
-                borderRadius: '9999px',
-              }}
+              className="text-[14px] font-semibold text-[#3182F6] bg-[#E8F3FF] px-3 py-1 rounded-xl tabular-nums"
             >
-              {selectedDate.year}.{String(selectedDate.month).padStart(2, '0')}.{String(selectedDate.day).padStart(2, '0')}
+              {selectedDate.year}년 {selectedDate.month}월 {selectedDate.day}일
             </span>
           </div>
 
-          {/* Memo textarea */}
+          {/* Memo Input */}
           <div
-            style={{
-              backgroundColor: '#f5f5f7',
-              borderRadius: '11px',
-              padding: '14px 16px',
-              minHeight: '110px',
-            }}
+            className={`rounded-2xl p-4 transition-all border min-h-[100px] flex flex-col ${
+              isMemoFocused
+                ? 'bg-white border-[#3182F6] ring-2 ring-[#3182F6]/15'
+                : 'bg-[#F2F4F6] border-transparent hover:border-[#D1D6DB]'
+            }`}
           >
             <textarea
-              placeholder="메모 (선택사항)"
+              placeholder="메모를 남겨보세요 (선택)"
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
-              style={{
-                width: '100%',
-                height: '100%',
-                minHeight: '80px',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                resize: 'none',
-                fontSize: '17px',
-                fontWeight: 400,
-                letterSpacing: '-0.374px',
-                color: '#1d1d1f',
-              }}
-              className="placeholder-[#7a7a7a]"
+              onFocus={() => setIsMemoFocused(true)}
+              onBlur={() => setIsMemoFocused(false)}
+              className="w-full h-full min-h-[70px] bg-transparent text-[15px] font-medium text-[#191F28] placeholder-[#8B95A1] focus:outline-none resize-none"
             />
           </div>
         </div>
+
+        {/* TDS XL Primary Button (56px) */}
+        <button
+          onClick={onSave}
+          disabled={!itemTitle.trim()}
+          className={`w-full h-14 rounded-2xl text-[17px] font-bold flex items-center justify-center transition-all cursor-pointer ${
+            itemTitle.trim()
+              ? 'bg-[#3182F6] text-white hover:bg-[#1b64da] active:scale-[0.98] shadow-md'
+              : 'bg-[#E5E8EB] text-[#8B95A1] cursor-not-allowed'
+          }`}
+        >
+          저장하기
+        </button>
       </div>
     </div>
   )
