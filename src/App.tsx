@@ -49,8 +49,8 @@ export default function App() {
   const [showMenu, setShowMenu] = useState(false)
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
   const [alarmEnabled, setAlarmEnabled] = useState(() => {
-    if (typeof window === 'undefined') return true
-    return localStorage.getItem('assign_plan_alarm_enabled') !== 'false'
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('assign_plan_alarm_enabled') === 'true'
   })
 
   // 모달 및 드로어 상태
