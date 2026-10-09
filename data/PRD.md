@@ -175,5 +175,5 @@ flowchart TD
 ## 7. 비기능 요구사항 (Non-Functional Requirements)
 
 1. **배포 안정성**: `npm run build` 검증 통과 및 오류 0건 유지.
-2. **배포 제어 원칙**: 사용자 요청 시에만 테스트 서버(`TestServer`) 또는 운영 배포(`firebase deploy`)를 선별 실행.
+2. **배포 제어 원칙**: 기본적으로 로컬 커밋 및 테스트 서버(`TestServer`)에 배포. 사용자 요청 시에만 GitHub 푸시(`git push`) 및 운영 배포(`firebase deploy`)를 선별 실행.
 3. **PWA & 모바일 최적화**: iOS 및 Android 홈 화면 추가(PWA) 시 백그라운드 푸시 수신 지원.
