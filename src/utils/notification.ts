@@ -4,8 +4,9 @@ import type { User } from 'firebase/auth'
 import { db, messaging } from '../firebase'
 import type { ItemData } from '../types'
 
-// Firebase Console에서 발급받은 VAPID 키 (사용자가 콘솔에서 발급 시 교체 가능하도록 옵셔널 지원)
-export const DEFAULT_VAPID_KEY = ''
+// Firebase Console에서 발급받은 VAPID 키
+export const DEFAULT_VAPID_KEY =
+  'BFjf4YJVVDZY8NA-qvmOEHE9TkwqltIROVygTMffBukNPhpcssCCW8frAWDnkgR1KYZkEOd6rV9lTqq7_A-xjlM'
 
 /**
  * 브라우저 알림 권한을 요청하고 FCM 등록 토큰을 발급받아 Firestore에 저장합니다.
