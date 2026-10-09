@@ -10,6 +10,15 @@ firebase.initializeApp({
   appId: "1:318585258391:web:c98cd7be1e1827f50ac4d2"
 });
 
+// 서비스 워커 즉시 활성화 (새 버전 배포 시 대기 없이 즉시 적용)
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
 const messaging = firebase.messaging();
 
 // 백그라운드 메시지 수신
