@@ -17,54 +17,49 @@ export const Header: React.FC<HeaderProps> = ({
   onSettingsClick,
 }) => {
   return (
-    <header className="relative z-40 bg-white border-b border-[#F2F4F6]">
-      {/* TDS TopBar (56px) */}
-      <div className="h-14 px-5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-[#3182F6]" />
-          <h1 className="text-[20px] font-bold text-[#191F28] tracking-tight">
-            과제와 강의
-          </h1>
-        </div>
+    <header className="relative z-40 px-5 pt-6 pb-2 flex items-center justify-between">
+      {/* Title */}
+      <h1 className="text-[24px] font-bold text-[#191F28] tracking-tight">
+        Assgin Plan
+      </h1>
 
-        {/* Right Icon Actions */}
-        <div className="flex items-center gap-1">
-          <button
-            onClick={onSearchClick}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] active:scale-95 transition-all cursor-pointer"
-            aria-label="검색"
-          >
-            <Search className="w-5 h-5 stroke-[2]" />
-          </button>
+      {/* Right Icon Actions */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onSearchClick}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-black/5 active:scale-95 transition-all cursor-pointer"
+          aria-label="검색"
+        >
+          <Search className="w-5 h-5 stroke-[2]" />
+        </button>
 
-          <button
-            onClick={onSettingsClick}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-[#F2F4F6] active:scale-95 transition-all cursor-pointer"
-            aria-label="설정"
-          >
-            <Settings className="w-5 h-5 stroke-[2]" />
-          </button>
+        <button
+          onClick={onSettingsClick}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-black/5 active:scale-95 transition-all cursor-pointer"
+          aria-label="설정"
+        >
+          <Settings className="w-5 h-5 stroke-[2]" />
+        </button>
 
-          {/* Toss Blue Add Button */}
-          <button
-            onClick={onToggleMenu}
-            className="ml-1 h-9 px-3.5 bg-[#3182F6] hover:bg-[#1b64da] text-white rounded-full flex items-center gap-1.5 text-[14px] font-semibold active:scale-95 transition-all cursor-pointer shadow-sm"
-            aria-label="추가"
-          >
-            <Plus
-              className={`w-4 h-4 stroke-[2.5] transition-transform duration-200 ${
-                showMenu ? 'rotate-45' : ''
-              }`}
-            />
-            <span>추가</span>
-          </button>
-        </div>
+        {/* Toss Blue Add Button */}
+        <button
+          onClick={onToggleMenu}
+          className="ml-1 h-9 px-3.5 bg-[#3182F6] hover:bg-[#1b64da] text-white rounded-full flex items-center gap-1.5 text-[14px] font-semibold active:scale-95 transition-all cursor-pointer shadow-sm"
+          aria-label="추가"
+        >
+          <Plus
+            className={`w-4 h-4 stroke-[2.5] transition-transform duration-200 ${
+              showMenu ? 'rotate-45' : ''
+            }`}
+          />
+          <span>추가</span>
+        </button>
       </div>
 
       {/* TDS Dropdown Menu */}
       {showMenu && (
         <div
-          className="absolute right-5 top-16 w-52 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          className="absolute right-5 top-18 w-52 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
           style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
           <button

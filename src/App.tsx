@@ -184,13 +184,9 @@ export default function App() {
     }
   }
 
-  const totalIncomplete =
-    lectures.filter((l) => !l.completed).length +
-    assignments.filter((a) => !a.completed).length
-
   return (
     <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] text-[#191F28] flex flex-col relative overflow-hidden select-none mx-auto shadow-xl">
-      {/* 상단 헤더 (TDS TopBar) */}
+      {/* 상단 헤더 */}
       <Header
         showMenu={showMenu}
         onToggleMenu={() => setShowMenu(!showMenu)}
@@ -202,7 +198,7 @@ export default function App() {
       {/* 설정 팝업 메뉴 (TDS Menu Popover) */}
       {showSettingsMenu && (
         <div
-          className="absolute right-5 top-16 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          className="absolute right-5 top-18 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
           style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
           {/* 알람 항목 */}
@@ -245,35 +241,7 @@ export default function App() {
       )}
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 overflow-y-auto px-4 pt-4 pb-12 flex flex-col gap-3.5">
-        {/* TDS Summary Banner */}
-        <div className="w-full bg-white rounded-[24px] p-5 border border-[#E5E8EB] shadow-[0_2px_10px_rgba(25,31,40,0.04)] flex items-center justify-between">
-          <div>
-            <span className="text-[13px] font-semibold text-[#8B95A1]">
-              오늘의 학업 현황
-            </span>
-            <h3 className="text-[19px] font-bold text-[#191F28] mt-0.5 tracking-tight">
-              {totalIncomplete === 0 ? (
-                '모든 일정을 끝냈어요 🎉'
-              ) : (
-                <>
-                  남은 일정이{' '}
-                  <span className="text-[#3182F6] tabular-nums">
-                    {totalIncomplete}개
-                  </span>{' '}
-                  있어요
-                </>
-              )}
-            </h3>
-          </div>
-
-          <button
-            onClick={() => handleOpenModal('강의')}
-            className="h-10 px-4 rounded-xl bg-[#E8F3FF] text-[#3182F6] hover:bg-[#d8eaff] active:scale-95 text-[14px] font-bold transition-all cursor-pointer flex items-center gap-1 shrink-0"
-          >
-            <span>+ 추가</span>
-          </button>
-        </div>
+      <main className="flex-1 overflow-y-auto px-4 pt-3 pb-12 flex flex-col gap-3.5">
 
         <ItemSection
           title="강의"
