@@ -24,6 +24,13 @@ export const ItemSection: React.FC<ItemSectionProps> = ({
   const isLecture = title === '강의'
   const incompleteCount = items.filter((item) => !item.completed).length
 
+  const now = new Date()
+  const todayDate = {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+  }
+
   return (
     <section className="w-full bg-white rounded-[24px] p-5 border border-[#E5E8EB] shadow-[0_2px_10px_rgba(25,31,40,0.04)] flex flex-col">
       {/* TDS Section Header */}
@@ -78,41 +85,56 @@ export const ItemSection: React.FC<ItemSectionProps> = ({
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-[#F2F4F6] mt-1">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="py-3.5 flex items-center justify-between gap-3 group transition-colors"
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                {/* TDS Square Checkbox */}
-                <button
-                  onClick={() => onToggleComplete(item.id)}
-                  className={`w-[22px] h-[22px] rounded-[6px] flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                    item.completed
-                      ? 'bg-[#3182F6] text-white shadow-sm'
-                      : 'border-[1.5px] border-[#D1D6DB] bg-white hover:border-[#3182F6]'
-                  }`}
-                  aria-label="완료 여부 변경"
-                >
-                  {item.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                </button>
+          {items.map((item) => {
+            const isToday =
+              item.date.year === todayDate.year &&
+              item.date.month === todayDate.month &&
+              item.date.day === todayDate.day
+
+            return (
+              <div
+                key={item.id}
+                className="py-3.5 flex items-center justify-between gap-3 group transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {/* TDS Square Checkbox */}
+                  <button
+                    onClick={() => onToggleComplete(item.id)}
+                    className={`w-[22px] h-[22px] rounded-[6px] flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                      item.completed
+                        ? 'bg-[#3182F6] text-white shadow-sm'
+                        : 'border-[1.5px] border-[#D1D6DB] bg-white hover:border-[#3182F6]'
+                    }`}
+                    aria-label="완료 여부 변경"
+                  >
+                    {item.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                  </button>
+
+                  <span
+                    className={`text-[15px] font-medium transition-all truncate ${
+                      item.completed
+                        ? 'line-through text-[#B0B8C1]'
+                        : 'text-[#191F28]'
+                    }`}
+                  >
+                    {item.title}
+                  </span>
+                </div>
 
                 <span
-                  className={`text-[15px] font-medium transition-all truncate ${
+                  className={`text-[13px] font-semibold tabular-nums shrink-0 px-2 py-0.5 rounded-md ${
                     item.completed
-                      ? 'line-through text-[#B0B8C1]'
-                      : 'text-[#191F28]'
+                      ? 'text-[#B0B8C1] bg-[#F2F4F6]'
+                      : isToday
+                      ? 'text-[#F04452] bg-[#FEE2E2] font-bold'
+                      : 'text-[#8B95A1] bg-[#F2F4F6]'
                   }`}
                 >
-                  {item.title}
+                  {item.date.month}월 {item.date.day}일
                 </span>
               </div>
-
-              <span className="text-[13px] font-medium text-[#8B95A1] tabular-nums shrink-0 bg-[#F2F4F6] px-2 py-0.5 rounded-md">
-                {item.date.month}월 {item.date.day}일
-              </span>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </section>

@@ -199,7 +199,6 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
                           month: currentMonth,
                           day,
                         })
-                        onClose()
                       }}
                       className={`w-9 h-9 rounded-full flex items-center justify-center font-medium transition-all cursor-pointer ${
                         disabled
@@ -224,13 +223,22 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
           </div>
         )}
 
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="w-full h-12 bg-[#F2F4F6] hover:bg-[#E5E8EB] active:scale-[0.98] text-[#191F28] font-bold text-[15px] rounded-xl transition-all cursor-pointer mt-1"
-        >
-          완료
-        </button>
+        {/* Action Button */}
+        {isWheelPickerMode ? (
+          <button
+            onClick={onToggleWheelPicker}
+            className="w-full h-12 bg-[#3182F6] hover:bg-[#1b64da] active:scale-[0.98] text-white font-bold text-[15px] rounded-xl transition-all cursor-pointer mt-1 shadow-sm"
+          >
+            선택 완료
+          </button>
+        ) : (
+          <button
+            onClick={onClose}
+            className="w-full h-12 bg-[#F2F4F6] hover:bg-[#E5E8EB] active:scale-[0.98] text-[#191F28] font-bold text-[15px] rounded-xl transition-all cursor-pointer mt-1"
+          >
+            완료
+          </button>
+        )}
       </div>
     </div>
   )
