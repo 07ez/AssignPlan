@@ -90,7 +90,7 @@ export async function setupForegroundMessageListener(
     if (Notification.permission === 'granted') {
       new Notification(title, {
         body,
-        icon: '/icon.png',
+        icon: '/icon-192.png',
       })
     }
   })

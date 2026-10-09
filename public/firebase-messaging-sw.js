@@ -25,20 +25,28 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Background message received:', payload);
 
-  // Firebase 콘솔에서 보낸 메시지는 FCM SDK가 시스템 알림을 자동으로 표출합니다.
-  // notification 객체가 이미 있을 때 showNotification을 다시 호출하면 알림이 2번 뜨므로,
-  // data 전용 메시지이거나 자동 표출이 되지 않는 경우에만 수동으로 띄웁니다.
-  if (!payload.notification && payload.data) {
-    const title = payload.data.title || '알림';
-    const options = {
-      body: payload.data.body || '',
-      icon: '/icon.png',
-      badge: '/icon.png',
-      tag: payload.data.tag || 'assign-plan-notice',
-      data: payload.data
-    };
-    self.registration.showNotification(title, options);
+  const title = payload.notification?.title || payload.data?.title || 'Assign Plan 알림';
+  const body = payload.notification?.body || payload.data?.body || '새로운 일정이 있어요.';
+
+  // 동일한 알림은 브라우저에서 하나로 병합되도록 tag 적용 (중복 알림 방지)
+  const tag = payload.messageId || payload.data?.tag || 'assign-plan-notice';
+
+  const notificationOptions = {
+    body,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    tag,
+    data: payload.data || {},
+    vibrate: [200, 100, 200]
+  };
+
+  // iOS(APNs)는 콘솔 알림 발송 시 Apple 시스템이 자체적으로 1회를 띄우므로, 중복 방지를 위해 iOS이고 notification 객체가 있는 경우 수동 표출 스킵
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS && payload.notification) {
+    return;
   }
+
+  return self.registration.showNotification(title, notificationOptions);
 });
 
 // 알림 클릭 시 앱 창 활성화 또는 오픈
