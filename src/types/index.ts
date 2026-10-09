@@ -4,7 +4,7 @@ export interface ItemData {
   date: { year: number; month: number; day: number }
   memo?: string
   completed: boolean
-  createdAt?: number
+  createdAt?: string | number
 }
 
 export type ModalType = '강의' | '과제'

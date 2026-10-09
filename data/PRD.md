@@ -111,9 +111,10 @@ flowchart LR
 
 1. **1단계 (Local Persistence)**:
    - 비로그인 상태에서도 브라우저 `localStorage`에 자동 저장되어 새로고침 후에도 등록한 일정 유지
-2. **2단계 (Cloud Sync - 복구 예정)**:
-   - Firebase Auth (Google Provider) 로그인 연동
-   - 로그인 성공 시 로컬 데이터를 클라우드와 병합하고, 실시간 동기화 지원
+2. **2단계 (Cloud Sync - 구현 완료)**:
+   - Firebase Auth (Google Provider) 팝업 로그인 연동
+   - 로그인 시 Firestore 실시간 동기화 (`users/{uid}/lectures`, `users/{uid}/task`)
+   - 첫 로그인 시 로컬 데이터를 클라우드와 자동 병합 및 안전한 백업 지원
 
 ### 4.2 Firestore 데이터베이스 스키마
 - **경로 구조**:
@@ -172,7 +173,7 @@ flowchart LR
 | **더보기 (More)** | 토스트 안내 표시 | 섹션별 상세 페이지 진입: [전체 / 마감 임박 / 완료됨] 세부 탭 필터 및 일괄 완료/삭제 관리 |
 | **반복 일정 (Repeat)** | 토스트 안내 표시 | 매주 특정 요일 수강 강의 등록 지원 (예: 매주 화/목 14시 강의 자동 생성) |
 | **알림 (Alarm)** | 스위치 토글만 지원 | 마감 당일 오전 9시 또는 마감 1일 전 브라우저 Web Push / Firebase Cloud Messaging(FCM) 알림 발송 |
-| **구글 로그인 복원** | 임시 제거 상태 | 헤더 우측 또는 설정 팝오버 내 구글 로그인 버튼 배치 및 Firestore 실시간 백업 활성화 |
+| **구글 로그인 & 동기화** | 구현 완료 (v1.0.6) | 헤더 프로필 아바타 및 설정 팝오버 연동, Firestore `lectures`/`task` 실시간 백업 활성화 |
 
 ---
 

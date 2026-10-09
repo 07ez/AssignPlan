@@ -1,5 +1,19 @@
-import { useState, useRef } from 'react'
-import { Bell, Info } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Bell, Info, LogOut } from 'lucide-react'
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  type User,
+} from 'firebase/auth'
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  onSnapshot,
+} from 'firebase/firestore'
+import { auth, db, googleProvider } from './firebase'
 
 // 1. 타입 및 유틸리티 불러오기
 import type { ItemData, ModalType } from './types'
@@ -12,6 +26,7 @@ import { Toast } from './components/Toast'
 import { AddModal } from './components/AddModal'
 import { DatePickerModal } from './components/DatePicker'
 import { ChangelogDrawer } from './components/Changelog'
+import { LoginScreen } from './components/LoginScreen'
 
 const TODAY = {
   year: new Date().getFullYear(),
@@ -20,6 +35,10 @@ const TODAY = {
 }
 
 export default function App() {
+  // --- 사용자 인증 상태 ---
+  const [user, setUser] = useState<User | null>(null)
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
+
   // --- UI 상태 ---
   const [showMenu, setShowMenu] = useState(false)
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
@@ -53,8 +72,22 @@ export default function App() {
   const [memo, setMemo] = useState('')
 
   // --- 과제 / 강의 데이터 상태 ---
-  const [lectures, setLectures] = useState<ItemData[]>([])
-  const [assignments, setAssignments] = useState<ItemData[]>([])
+  const [lectures, setLectures] = useState<ItemData[]>(() => {
+    try {
+      const saved = localStorage.getItem('assign_plan_lectures_local')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+  const [assignments, setAssignments] = useState<ItemData[]>(() => {
+    try {
+      const saved = localStorage.getItem('assign_plan_tasks_local')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
 
   // DOM 참조 (날짜 뱃지 위치 계산용)
   const dateBadgeRef = useRef<HTMLSpanElement | null>(null)
@@ -64,6 +97,118 @@ export default function App() {
     setToastMessage(msg)
     setShowToast(true)
     setTimeout(() => setShowToast(false), 2000)
+  }
+
+  // --- LocalStorage 자동 백업 ---
+  useEffect(() => {
+    try {
+      localStorage.setItem('assign_plan_lectures_local', JSON.stringify(lectures))
+    } catch (err) {
+      console.error('LocalStorage write error (lectures):', err)
+    }
+  }, [lectures])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('assign_plan_tasks_local', JSON.stringify(assignments))
+    } catch (err) {
+      console.error('LocalStorage write error (tasks):', err)
+    }
+  }, [assignments])
+
+  // --- Firebase 인증 리스너 ---
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setIsAuthLoading(false)
+    })
+    return () => unsub()
+  }, [])
+
+  // --- Firestore 실시간 동기화 (users > {uid} > lectures / tasks) ---
+  useEffect(() => {
+    if (!user) return
+
+    // 1. 강의 컬렉션 구독 (lectures)
+    const lecturesRef = collection(db, 'users', user.uid, 'lectures')
+    const unsubLectures = onSnapshot(
+      lecturesRef,
+      (snapshot) => {
+        const items: ItemData[] = []
+        snapshot.forEach((d) => {
+          const data = d.data()
+          // 완료된(completed === true) 항목은 불러오지 않음
+          if (data.completed === true) return
+
+          items.push({
+            id: d.id,
+            title: data.title || '',
+            memo: data.memo || '',
+            date: data.date || TODAY,
+            completed: false,
+            createdAt: data.createdAt,
+          })
+        })
+        setLectures(items.sort(sortByDate))
+      },
+      (err) => {
+        console.error('Lectures snapshot error:', err)
+      }
+    )
+
+    // 2. 과제 컬렉션 구독 (tasks)
+    const tasksRef = collection(db, 'users', user.uid, 'tasks')
+    const unsubTasks = onSnapshot(
+      tasksRef,
+      (snapshot) => {
+        const items: ItemData[] = []
+        snapshot.forEach((d) => {
+          const data = d.data()
+          // 완료된(completed === true) 항목은 불러오지 않음
+          if (data.completed === true) return
+
+          items.push({
+            id: d.id,
+            title: data.title || '',
+            memo: data.memo || '',
+            date: data.date || TODAY,
+            completed: false,
+            createdAt: data.createdAt,
+          })
+        })
+        setAssignments(items.sort(sortByDate))
+      },
+      (err) => {
+        console.error('Tasks snapshot error:', err)
+      }
+    )
+
+    return () => {
+      unsubLectures()
+      unsubTasks()
+    }
+  }, [user])
+
+  // --- 구글 로그인 / 로그아웃 제어 ---
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider)
+      triggerToast('Google 계정으로 로그인되었어요')
+    } catch (err) {
+      console.error('Login error:', err)
+      triggerToast('로그인에 실패했어요')
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      setShowSettingsMenu(false)
+      await signOut(auth)
+      triggerToast('로그아웃되었어요')
+    } catch (err) {
+      console.error('Logout error:', err)
+      triggerToast('로그아웃에 실패했어요')
+    }
   }
 
   // --- 모달 제어 함수 ---
@@ -149,39 +294,83 @@ export default function App() {
   }
 
   // --- 데이터 저장 및 토글 ---
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!itemTitle.trim()) return
 
-    const newItem: ItemData = {
-      id: Date.now().toString(),
-      title: itemTitle,
-      date: selectedDate,
-      memo,
+    const docData = {
+      title: itemTitle.trim(),
+      memo: memo.trim(),
+      date: {
+        year: selectedDate.year,
+        month: selectedDate.month,
+        day: selectedDate.day,
+      },
       completed: false,
+      createdAt: Date.now(),
     }
 
-    if (modalType === '강의') {
-      setLectures((prev) => [...prev, newItem].sort(sortByDate))
+    if (user) {
+      try {
+        const collName = modalType === '강의' ? 'lectures' : 'tasks'
+        await addDoc(collection(db, 'users', user.uid, collName), docData)
+        triggerToast(`${modalType}가 저장되었어요`)
+      } catch (err) {
+        console.error('Firestore save error:', err)
+        triggerToast('저장에 실패했어요')
+      }
     } else {
-      setAssignments((prev) => [...prev, newItem].sort(sortByDate))
+      const newItem: ItemData = {
+        id: Date.now().toString(),
+        ...docData,
+      }
+      if (modalType === '강의') {
+        setLectures((prev) => [...prev, newItem].sort(sortByDate))
+      } else {
+        setAssignments((prev) => [...prev, newItem].sort(sortByDate))
+      }
+      triggerToast(`${modalType}가 저장되었어요`)
     }
+
     handleCloseModal()
   }
 
   const handleToggleComplete = (id: string, type: '강의' | '과제') => {
+    const collName = type === '강의' ? 'lectures' : 'tasks'
+
+    // 1. 체크마크 애니메이션 즉시 적용
     if (type === '강의') {
       setLectures((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, completed: !item.completed } : item
+          item.id === id ? { ...item, completed: true } : item
         )
       )
     } else {
       setAssignments((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, completed: !item.completed } : item
+          item.id === id ? { ...item, completed: true } : item
         )
       )
     }
+
+    // 2. 잠시 후(350ms) Firestore 완료 처리 -> completed true인 항목은 목록에서 자연스럽게 제외
+    setTimeout(async () => {
+      if (user) {
+        try {
+          await updateDoc(doc(db, 'users', user.uid, collName, id), {
+            completed: true,
+          })
+        } catch (err) {
+          console.error('Firestore update error:', err)
+          triggerToast('완료 상태 변경에 실패했어요')
+        }
+      } else {
+        if (type === '강의') {
+          setLectures((prev) => prev.filter((item) => item.id !== id))
+        } else {
+          setAssignments((prev) => prev.filter((item) => item.id !== id))
+        }
+      }
+    }, 350)
   }
 
   const handleToggleMenu = () => {
@@ -198,9 +387,34 @@ export default function App() {
     setShowSettingsMenu((prev) => !prev)
   }
 
+  // --- 1. 인증 초기 로딩 화면 ---
+  if (isAuthLoading) {
+    return (
+      <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] flex flex-col items-center justify-center mx-auto shadow-xl select-none">
+        <img
+          src="/icon.png"
+          alt="Assign Plan"
+          className="w-14 h-14 rounded-2xl shadow-md object-cover animate-pulse"
+        />
+        <p className="mt-4 text-[14px] font-medium text-[#8B95A1]">불러오는 중...</p>
+      </div>
+    )
+  }
+
+  // --- 2. 비로그인 상태: 로그인 화면 (게스트 로그인 없음) ---
+  if (!user) {
+    return (
+      <>
+        <LoginScreen onLogin={handleGoogleLogin} />
+        <Toast show={showToast} message={toastMessage} />
+      </>
+    )
+  }
+
+  // --- 3. 로그인 완료 상태: 메인 앱 화면 ---
   return (
     <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] text-[#191F28] flex flex-col relative overflow-hidden select-none mx-auto shadow-xl">
-      {/* 상단 헤더 */}
+      {/* 상단 헤더 (설정 버튼은 항상 설정 톱니바퀴 아이콘) */}
       <Header
         showMenu={showMenu}
         showSettingsMenu={showSettingsMenu}
@@ -213,9 +427,32 @@ export default function App() {
       {/* 설정 팝업 메뉴 (TDS Menu Popover) */}
       {showSettingsMenu && (
         <div
-          className="absolute right-5 top-18 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] origin-top-right animate-popover-in"
+          className="absolute right-5 top-18 w-64 bg-white rounded-2xl p-2.5 z-50 flex flex-col gap-1 border border-[#E5E8EB] origin-top-right animate-popover-in"
           style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
+          {/* 유저 계정 프로필 카드 */}
+          <div className="p-3 bg-[#F9FAFB] rounded-xl flex items-center gap-3 border border-[#E5E8EB] mb-1">
+            {user.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt={user.displayName || '사용자'}
+                className="w-9 h-9 rounded-full object-cover border border-[#E5E8EB] shrink-0"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-[#E8F3FF] text-[#3182F6] font-bold text-[14px] flex items-center justify-center shrink-0">
+                {user.displayName?.[0] || 'U'}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="text-[14px] font-bold text-[#191F28] truncate">
+                {user.displayName || '사용자'}
+              </div>
+              <div className="text-[11px] text-[#8B95A1] truncate">
+                {user.email}
+              </div>
+            </div>
+          </div>
+
           {/* 알람 항목 */}
           <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-[#F2F4F6] transition-colors">
             <div className="flex items-center gap-2.5 text-[#191F28]">
@@ -252,12 +489,23 @@ export default function App() {
               v1.0.5
             </span>
           </button>
+
+          {/* 로그아웃 버튼 */}
+          <div className="h-[1px] bg-[#F2F4F6] my-0.5" />
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl hover:bg-[#FEE2E2]/60 active:bg-[#FEE2E2] transition-colors cursor-pointer text-[#F04452]"
+          >
+            <div className="flex items-center gap-2.5">
+              <LogOut className="w-4 h-4 stroke-[2.2]" />
+              <span className="text-[14px] font-semibold">로그아웃</span>
+            </div>
+          </button>
         </div>
       )}
 
       {/* 메인 콘텐츠 영역 */}
       <main className="flex-1 overflow-y-auto px-4 pt-3 pb-12 flex flex-col gap-3.5">
-
         <ItemSection
           title="강의"
           items={lectures}
