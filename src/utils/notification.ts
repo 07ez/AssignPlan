@@ -42,12 +42,16 @@ export async function requestNotificationPermission(
           tokenOptions.vapidKey = vapidKey
         }
 
+        const isStandalone =
+          (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+          window.matchMedia('(display-mode: standalone)').matches
+
         const token = await getToken(messaging, tokenOptions)
         if (token) {
           // Firestore users/{uid}/fcmTokens/{token} 저장
           await setDoc(doc(db, 'users', user.uid, 'fcmTokens', token), {
             token,
-            platform: 'web',
+            platform: isStandalone ? 'pwa' : 'browser',
             userAgent: navigator.userAgent,
             updatedAt: Date.now(),
           })

@@ -198,7 +198,7 @@ export default function App() {
     }
   }, [user])
 
-  // --- 알림 초기화 및 마감 체크 ---
+  // --- FCM 토큰 동기화 및 포그라운드 메시지 리스너 ---
   useEffect(() => {
     if (!user || !alarmEnabled) return
 
@@ -215,16 +215,23 @@ export default function App() {
       unsubForeground = unsub
     })
 
-    // 마감 기한 체크 및 로컬 알림 발송 (D-3, D-1, D-Day 오전 10시)
-    checkAndSendDueNotifications([...lectures, ...assignments])
-
-    // 주기적 마감 체크 (오전 10시 도달 감지)
-    const interval = setInterval(() => {
-      checkAndSendDueNotifications([...lectures, ...assignments])
-    }, 1000 * 60 * 30) // 30분 주기
-
     return () => {
       if (unsubForeground) unsubForeground()
+    }
+  }, [user, alarmEnabled])
+
+  // --- 마감 일정 체크 및 로컬 알림 발송 (D-3, D-1, D-Day 오전 10시) ---
+  useEffect(() => {
+    if (!user || !alarmEnabled) return
+
+    checkAndSendDueNotifications([...lectures, ...assignments])
+
+    // 주기적 마감 체크 (오전 10시 도달 감지, 30분 주기)
+    const interval = setInterval(() => {
+      checkAndSendDueNotifications([...lectures, ...assignments])
+    }, 1000 * 60 * 30)
+
+    return () => {
       clearInterval(interval)
     }
   }, [user, alarmEnabled, lectures, assignments])
