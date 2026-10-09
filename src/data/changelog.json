@@ -1,5 +1,14 @@
 [
   {
+    "version": "v1.0.6",
+    "date": "2026.10.09",
+    "changes": [
+      "로그인 게이트 화면 적용 및 Google 계정 로그인 연동",
+      "Firestore 컬렉션(lectures, tasks) 동기화 및 완료 항목 필터링",
+      "앱 아이콘 및 브라우저 파비콘 캐시 무효화 적용"
+    ]
+  },
+  {
     "version": "v1.0.5",
     "date": "2026.10.09",
     "changes": [

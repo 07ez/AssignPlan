@@ -5,7 +5,7 @@
 ## 1. 개요 (Overview)
 
 - **제품명**: Assign Plan (Assgin Plan)
-- **버전**: v1.0.5 (Toss Design System 적용)
+- **버전**: v1.0.6 (로그인 게이트 및 동기화 안정화)
 - **카테고리**: 학습/생산성 (Study & Task Management)
 - **문서 작성일**: 2026-10-09
 - **배포 환경**: 

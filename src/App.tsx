@@ -487,7 +487,7 @@ export default function App() {
               <span className="text-[14px] font-semibold">버전 정보</span>
             </div>
             <span className="text-[12px] font-bold text-[#3182F6] tabular-nums bg-[#E8F3FF] px-2 py-0.5 rounded-full">
-              v1.0.5
+              v1.0.6
             </span>
           </button>
 
