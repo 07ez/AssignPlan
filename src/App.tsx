@@ -27,6 +27,7 @@ import { AddModal } from './components/AddModal'
 import { DatePickerModal } from './components/DatePicker'
 import { ChangelogDrawer } from './components/Changelog'
 import { LoginScreen } from './components/LoginScreen'
+import appIcon from './assets/icon.png'
 
 const TODAY = {
   year: new Date().getFullYear(),
@@ -392,7 +393,7 @@ export default function App() {
     return (
       <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] flex flex-col items-center justify-center mx-auto shadow-xl select-none">
         <img
-          src="/icon.png"
+          src={appIcon}
           alt="Assign Plan"
           className="w-14 h-14 rounded-2xl shadow-md object-cover animate-pulse"
         />

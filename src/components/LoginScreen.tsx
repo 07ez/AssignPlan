@@ -1,5 +1,6 @@
 import React from 'react'
 import { Video, FileText } from 'lucide-react'
+import appIcon from '../assets/icon.png'
 
 interface LoginScreenProps {
   onLogin: () => void
@@ -13,7 +14,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
       <div className="pt-12 flex flex-col items-start gap-4">
         {/* App Logo */}
         <img
-          src="/icon.png"
+          src={appIcon}
           alt="Assign Plan"
           className="w-14 h-14 rounded-2xl shadow-md object-cover shadow-black/10"
         />
