@@ -28,6 +28,11 @@ import { DatePickerModal } from './components/DatePicker'
 import { ChangelogDrawer } from './components/Changelog'
 import { LoginScreen } from './components/LoginScreen'
 import appIcon from './assets/icon.png'
+import {
+  requestNotificationPermission,
+  setupForegroundMessageListener,
+  checkAndSendDueNotifications,
+} from './utils/notification'
 
 const TODAY = {
   year: new Date().getFullYear(),
@@ -43,7 +48,10 @@ export default function App() {
   // --- UI 상태 ---
   const [showMenu, setShowMenu] = useState(false)
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
-  const [alarmEnabled, setAlarmEnabled] = useState(true)
+  const [alarmEnabled, setAlarmEnabled] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return localStorage.getItem('assign_plan_alarm_enabled') !== 'false'
+  })
 
   // 모달 및 드로어 상태
   const [showModal, setShowModal] = useState(false)
@@ -189,6 +197,60 @@ export default function App() {
       unsubTasks()
     }
   }, [user])
+
+  // --- 알림 초기화 및 마감 체크 ---
+  useEffect(() => {
+    if (!user || !alarmEnabled) return
+
+    // 브라우저 권한이 이미 허용된 상태라면 FCM 토큰 갱신 및 등록
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      requestNotificationPermission(user).catch(console.error)
+    }
+
+    // 포그라운드 메시지 리스너 설정
+    let unsubForeground: (() => void) | undefined
+    setupForegroundMessageListener((payload) => {
+      triggerToast(`🔔 ${payload.title}: ${payload.body}`)
+    }).then((unsub) => {
+      unsubForeground = unsub
+    })
+
+    // 마감 기한 체크 및 로컬 알림 발송 (D-3, D-1, D-Day 오전 10시)
+    checkAndSendDueNotifications([...lectures, ...assignments])
+
+    // 주기적 마감 체크 (오전 10시 도달 감지)
+    const interval = setInterval(() => {
+      checkAndSendDueNotifications([...lectures, ...assignments])
+    }, 1000 * 60 * 30) // 30분 주기
+
+    return () => {
+      if (unsubForeground) unsubForeground()
+      clearInterval(interval)
+    }
+  }, [user, alarmEnabled, lectures, assignments])
+
+  // --- 알림 켜기/끄기 토글 제어 ---
+  const handleToggleAlarm = async () => {
+    const nextState = !alarmEnabled
+    setAlarmEnabled(nextState)
+    localStorage.setItem('assign_plan_alarm_enabled', String(nextState))
+
+    if (nextState) {
+      if (user) {
+        const res = await requestNotificationPermission(user)
+        if (res.success) {
+          triggerToast('마감 알림이 켜졌어요 (오전 10시)')
+          checkAndSendDueNotifications([...lectures, ...assignments])
+        } else {
+          triggerToast(res.error || '브라우저 알림 권한을 허용해주세요')
+        }
+      } else {
+        triggerToast('마감 알림이 켜졌어요')
+      }
+    } else {
+      triggerToast('마감 알림이 꺼졌어요')
+    }
+  }
 
   // --- 구글 로그인 / 로그아웃 제어 ---
   const handleGoogleLogin = async () => {
@@ -462,7 +524,7 @@ export default function App() {
             </div>
             {/* TDS Switch Component */}
             <button
-              onClick={() => setAlarmEnabled(!alarmEnabled)}
+              onClick={handleToggleAlarm}
               className={`w-11 h-6.5 rounded-full p-0.5 flex items-center transition-colors cursor-pointer ${
                 alarmEnabled ? 'bg-[#3182F6]' : 'bg-[#D1D6DB]'
               }`}
@@ -487,7 +549,7 @@ export default function App() {
               <span className="text-[14px] font-semibold">버전 정보</span>
             </div>
             <span className="text-[12px] font-bold text-[#3182F6] tabular-nums bg-[#E8F3FF] px-2 py-0.5 rounded-full">
-              v1.0.6
+              v1.1.0
             </span>
           </button>
 

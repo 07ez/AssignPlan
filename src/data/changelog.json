@@ -1,5 +1,14 @@
 [
   {
+    "version": "v1.1.0",
+    "date": "2026.10.09",
+    "changes": [
+      "마감 알림 시스템 도입 (D-3, D-1, 당일 오전 10:00 푸시 알림)",
+      "Firebase Cloud Messaging(FCM) 및 웹 푸시 Service Worker 연동",
+      "설정 내 알림 켜기/끄기 토글 및 브라우저 권한 연동"
+    ]
+  },
+  {
     "version": "v1.0.6",
     "date": "2026.10.09",
     "changes": [

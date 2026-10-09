@@ -1,7 +1,7 @@
 {
   "name": "assign_plan",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
