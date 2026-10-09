@@ -123,11 +123,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
                       Safari 하단 오른쪽의{' '}
-                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline text-[11.5px]">
-                        <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[#8B95A1] text-[9px] mr-1 font-bold leading-none">···</span>
-                        더보기
-                      </span>
-                      를 누르고,{' '}
+                      <span className="whitespace-nowrap inline-flex items-center justify-center w-5 h-5 rounded-full border border-[#8B95A1] text-[10px] font-bold text-[#4E5968] align-middle mx-0.5 shadow-xs">
+                        ···
+                      </span>{' '}
+                      아이콘을 누르고,{' '}
                       <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline text-[11.5px]">
                         <Share className="w-3 h-3 inline mr-1 stroke-[2.2]" />
                         공유
@@ -142,13 +141,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
                       2
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      공유 메뉴를 아래로 내려
-                      <div className="my-1">
-                        <span className="inline-flex items-center gap-1.5 font-bold text-[#1B64DA] bg-[#E8F3FF] px-2.5 py-1 rounded-lg text-[12px] whitespace-nowrap shadow-xs">
-                          <PlusSquare className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
-                          홈 화면에 추가
-                        </span>
-                      </div>
+                      공유창 메뉴에서{' '}
+                      <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#F2F4F6] text-[#333D4B] rounded-md mx-0.5 align-baseline text-[11.5px]">
+                        더보기
+                      </span>
+                      를 누르거나 아래로 내려{' '}
+                      <span className="whitespace-nowrap inline-flex items-center gap-1 font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline text-[11.5px]">
+                        <PlusSquare className="w-3.5 h-3.5 stroke-[2.2] shrink-0" />
+                        홈&nbsp;화면에&nbsp;추가
+                      </span>
                       항목을 선택하세요.
                     </div>
                   </div>
@@ -159,7 +160,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLoading }) 
                       3
                     </div>
                     <div className="flex-1 text-[#333D4B] leading-snug break-keep">
-                      우측 상단의{' '}
+                      화면 우측 상단의{' '}
                       <span className="whitespace-nowrap inline-flex items-center font-bold px-1.5 py-0.5 bg-[#E8F3FF] text-[#1B64DA] rounded-md mx-0.5 align-baseline text-[11.5px]">
                         추가
                       </span>{' '}
