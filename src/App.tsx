@@ -184,21 +184,36 @@ export default function App() {
     }
   }
 
+  const handleToggleMenu = () => {
+    if (!showMenu) {
+      setShowSettingsMenu(false)
+    }
+    setShowMenu((prev) => !prev)
+  }
+
+  const handleToggleSettings = () => {
+    if (!showSettingsMenu) {
+      setShowMenu(false)
+    }
+    setShowSettingsMenu((prev) => !prev)
+  }
+
   return (
     <div className="w-full max-w-[480px] min-h-screen bg-[#F2F4F6] text-[#191F28] flex flex-col relative overflow-hidden select-none mx-auto shadow-xl">
       {/* 상단 헤더 */}
       <Header
         showMenu={showMenu}
-        onToggleMenu={() => setShowMenu(!showMenu)}
+        showSettingsMenu={showSettingsMenu}
+        onToggleMenu={handleToggleMenu}
         onOpenModal={handleOpenModal}
         onSearchClick={() => triggerToast('검색 기능은 준비 중이에요')}
-        onSettingsClick={() => setShowSettingsMenu(!showSettingsMenu)}
+        onSettingsClick={handleToggleSettings}
       />
 
       {/* 설정 팝업 메뉴 (TDS Menu Popover) */}
       {showSettingsMenu && (
         <div
-          className="absolute right-5 top-18 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          className="absolute right-5 top-18 w-56 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] origin-top-right animate-popover-in"
           style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
           {/* 알람 항목 */}

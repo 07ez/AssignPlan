@@ -3,14 +3,16 @@ import { Search, Settings, Plus, Video, FileText, Repeat } from 'lucide-react'
 
 interface HeaderProps {
   showMenu: boolean
+  showSettingsMenu: boolean
   onToggleMenu: () => void
   onOpenModal: (type: '강의' | '과제') => void
   onSearchClick: () => void
-  onSettingsClick?: () => void
+  onSettingsClick: () => void
 }
 
 export const Header: React.FC<HeaderProps> = ({
   showMenu,
+  showSettingsMenu,
   onToggleMenu,
   onOpenModal,
   onSearchClick,
@@ -33,25 +35,26 @@ export const Header: React.FC<HeaderProps> = ({
           <Search className="w-5 h-5 stroke-[2]" />
         </button>
 
+        {/* Settings button with rotating gear icon */}
         <button
           onClick={onSettingsClick}
           className="w-10 h-10 rounded-full flex items-center justify-center text-[#4E5968] hover:bg-black/5 active:scale-95 transition-all cursor-pointer"
           aria-label="설정"
         >
-          <Settings className="w-5 h-5 stroke-[2]" />
+          <Settings
+            className={`w-5 h-5 stroke-[2] transition-transform duration-300 ${
+              showSettingsMenu ? 'rotate-90' : 'rotate-0'
+            }`}
+          />
         </button>
 
-        {/* Toss Blue Add Button */}
+        {/* Toss Blue Add Button (+ icon does NOT rotate) */}
         <button
           onClick={onToggleMenu}
           className="ml-1 h-9 px-3.5 bg-[#3182F6] hover:bg-[#1b64da] text-white rounded-full flex items-center gap-1.5 text-[14px] font-semibold active:scale-95 transition-all cursor-pointer shadow-sm"
           aria-label="추가"
         >
-          <Plus
-            className={`w-4 h-4 stroke-[2.5] transition-transform duration-200 ${
-              showMenu ? 'rotate-45' : ''
-            }`}
-          />
+          <Plus className="w-4 h-4 stroke-[2.5]" />
           <span>추가</span>
         </button>
       </div>
@@ -59,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* TDS Dropdown Menu */}
       {showMenu && (
         <div
-          className="absolute right-5 top-18 w-52 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] animate-popover-in"
+          className="absolute right-5 top-18 w-52 bg-white rounded-2xl p-2 z-50 flex flex-col gap-1 border border-[#E5E8EB] origin-top-right animate-popover-in"
           style={{ boxShadow: '0 8px 24px rgba(25, 31, 40, 0.12)' }}
         >
           <button

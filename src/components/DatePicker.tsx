@@ -158,7 +158,9 @@ export const DatePickerModal: React.FC<DatePickerModalProps> = ({
           <div
             key={`${currentYear}-${currentMonth}`}
             className={
-              slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'
+              slideDirection === 'left'
+                ? 'animate-slide-from-left'
+                : 'animate-slide-from-right'
             }
           >
             <div className="grid grid-cols-7 text-center text-[12px] font-semibold text-[#8B95A1] py-1 mb-1">

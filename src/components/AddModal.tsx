@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { X, Calendar } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 
 interface DateType {
   year: number
@@ -44,20 +44,35 @@ export const AddModal: React.FC<AddModalProps> = ({
 
   if (!show) return null
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startYRef.current = e.touches[0].clientY
+  // Pointer drag handler (터치 및 마우스 드래그 모두 지원)
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return
+    startYRef.current = e.clientY
     setIsDragging(true)
+    try {
+      ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    } catch {
+      // ignore
+    }
   }
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging) return
-    const deltaY = e.touches[0].clientY - startYRef.current
-    if (deltaY > 0) setTranslateY(deltaY)
+    const deltaY = e.clientY - startYRef.current
+    if (deltaY > 0) {
+      setTranslateY(deltaY)
+    }
   }
 
-  const handleTouchEnd = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDragging) return
     setIsDragging(false)
-    if (translateY > 120) {
+    try {
+      ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+    } catch {
+      // ignore
+    }
+    if (translateY > 90) {
       onClose()
     } else {
       setTranslateY(0)
@@ -78,38 +93,25 @@ export const AddModal: React.FC<AddModalProps> = ({
           transform: `translateY(${translateY}px)`,
           transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
-        className={`w-full max-w-[480px] bg-white rounded-t-[28px] px-6 pt-3 pb-8 flex flex-col gap-5 shadow-[0_-8px_32px_rgba(25,31,40,0.12)] touch-none select-none ${
+        className={`w-full max-w-[480px] bg-white rounded-t-[28px] px-6 pt-3 pb-8 flex flex-col gap-4 shadow-[0_-8px_32px_rgba(25,31,40,0.12)] select-none ${
           isClosing ? 'animate-sheet-down' : 'animate-sheet-up'
         }`}
       >
-        {/* Drag Handle */}
+        {/* Drag Handle & Header Area (포인터 다운으로 드래그) */}
         <div
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          className="w-full pt-1 pb-1 flex justify-center cursor-grab active:cursor-grabbing"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          className="w-full pt-1 pb-2 flex flex-col items-center cursor-grab active:cursor-grabbing touch-none"
         >
-          <div className="w-10 h-1 rounded-full bg-[#D1D6DB]" />
-        </div>
+          {/* Drag Handle Bar */}
+          <div className="w-10 h-1 rounded-full bg-[#D1D6DB] mb-3" />
 
-        {/* Sheet Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-[20px] font-bold text-[#191F28] tracking-tight">
-              {modalType} 추가하기
-            </h2>
-            <p className="text-[13px] text-[#8B95A1] mt-0.5">
-              새로운 {modalType}의 일정과 메모를 등록해 보세요
-            </p>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full bg-[#F2F4F6] text-[#4E5968] hover:bg-[#E5E8EB] active:scale-95 transition-all flex items-center justify-center cursor-pointer"
-            aria-label="닫기"
-          >
-            <X className="w-5 h-5 stroke-[2]" />
-          </button>
+          {/* Centered Title (X버튼 제거 및 중앙 배치) */}
+          <h2 className="text-[18px] font-bold text-[#191F28] tracking-tight text-center w-full">
+            {modalType} 추가하기
+          </h2>
         </div>
 
         {/* Form Fields */}
