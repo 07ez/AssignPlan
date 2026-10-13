@@ -1,5 +1,14 @@
 [
   {
+    "version": "v1.1.3",
+    "date": "2026.10.13",
+    "changes": [
+      "백그라운드 자동 푸시 알림 서버 스케줄러(GitHub Actions) 구축",
+      "모바일 환경 ServiceWorker 기반 시스템 알림 발송 개선",
+      "만료된 FCM 푸시 토큰 자동 정리 로직 추가"
+    ]
+  },
+  {
     "version": "v1.1.2",
     "date": "2026.10.09",
     "changes": [
