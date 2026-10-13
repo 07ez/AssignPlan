@@ -132,10 +132,8 @@ export function checkAndSendDueNotifications(items: ItemData[]) {
   if (Notification.permission !== 'granted') return
 
   const now = new Date()
-  // [테스트 설정] 오전 10시 50분 이후부터 당일 알림 발송
-  const isAfterTargetTime =
-    now.getHours() > 10 || (now.getHours() === 10 && now.getMinutes() >= 50)
-  if (!isAfterTargetTime) return
+  // 오전 10시 정각 이후부터 당일 알림 발송
+  if (now.getHours() < 10) return
 
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
   const dateKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
@@ -166,10 +164,10 @@ export function checkAndSendDueNotifications(items: ItemData[]) {
     }
 
     if (alertType) {
-      const cacheKey = `assign_plan_notified_1050_${item.id}_${alertType}_${dateKey}`
+      const cacheKey = `assign_plan_notified_${item.id}_${alertType}_${dateKey}`
       if (!localStorage.getItem(cacheKey)) {
         localStorage.setItem(cacheKey, 'true')
-        showSystemNotification(title, body, `${item.id}_${alertType}_1050`)
+        showSystemNotification(title, body, `${item.id}_${alertType}`)
       }
     }
   })

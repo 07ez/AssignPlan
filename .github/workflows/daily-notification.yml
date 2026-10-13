@@ -1,9 +1,9 @@
 name: Daily 10AM Deadline Notification
 
 on:
-  # [테스트] 한국 시간(KST) 오전 10:50 실행 (UTC 01:50)
+  # 매일 한국 시간(KST) 오전 10:00 정각 자동 실행 (UTC 01:00)
   schedule:
-    - cron: '50 1 * * *'
+    - cron: '0 1 * * *'
 
   # GitHub Actions 탭에서 수동으로 즉시 실행 및 테스트 가능
   workflow_dispatch:

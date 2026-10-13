@@ -34,6 +34,8 @@ import {
   checkAndSendDueNotifications,
 } from './utils/notification'
 
+const APP_VERSION = '1.1.4'
+
 const TODAY = {
   year: new Date().getFullYear(),
   month: new Date().getMonth() + 1,
@@ -132,6 +134,46 @@ export default function App() {
       setIsAuthLoading(false)
     })
     return () => unsub()
+  }, [])
+
+  // --- 웹앱(PWA) 자동 업데이트 감지 및 새로고침 ---
+  useEffect(() => {
+    const checkAppUpdate = async () => {
+      try {
+        const res = await fetch(`/version.json?t=${Date.now()}`, { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        if (data?.version && data.version !== APP_VERSION) {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations()
+            await Promise.all(regs.map((r) => r.update()))
+          }
+          if ('caches' in window) {
+            const keys = await caches.keys()
+            await Promise.all(keys.map((k) => caches.delete(k)))
+          }
+          window.location.reload()
+        }
+      } catch {
+        // 오프라인 등 무시
+      }
+    }
+
+    checkAppUpdate()
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAppUpdate()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', checkAppUpdate)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', checkAppUpdate)
+    }
   }, [])
 
   // --- Firestore 실시간 동기화 (users > {uid} > lectures / tasks) ---
@@ -556,7 +598,7 @@ export default function App() {
               <span className="text-[14px] font-semibold">버전 정보</span>
             </div>
             <span className="text-[12px] font-bold text-[#3182F6] tabular-nums bg-[#E8F3FF] px-2 py-0.5 rounded-full">
-              v1.1.3
+              v{APP_VERSION}
             </span>
           </button>
 
