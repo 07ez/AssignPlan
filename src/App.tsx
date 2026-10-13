@@ -226,10 +226,10 @@ export default function App() {
 
     checkAndSendDueNotifications([...lectures, ...assignments])
 
-    // 주기적 마감 체크 (오전 10시 도달 감지, 30분 주기)
+    // 주기적 마감 체크 (지정 시각 도달 감지, 15초 주기)
     const interval = setInterval(() => {
       checkAndSendDueNotifications([...lectures, ...assignments])
-    }, 1000 * 60 * 30)
+    }, 1000 * 15)
 
     return () => {
       clearInterval(interval)
