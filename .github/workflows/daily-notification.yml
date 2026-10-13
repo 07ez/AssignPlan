@@ -1,0 +1,39 @@
+name: Daily 10AM Deadline Notification
+
+on:
+  # 매일 한국 시간(KST) 오전 10:00 정각 자동 실행 (UTC 01:00)
+  schedule:
+    - cron: '0 1 * * *'
+
+  # GitHub Actions 탭에서 수동으로 즉시 실행 및 테스트 가능
+  workflow_dispatch:
+    inputs:
+      force_test:
+        description: '오늘 마감 일정이 없어도 연동 확인용 테스트 알림 보내기'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  send-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install firebase-admin
+        run: npm install --no-save firebase-admin
+
+      - name: Send FCM Notifications (D-3, D-1, D-Day)
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FORCE_TEST: ${{ github.event_name == 'workflow_dispatch' && inputs.force_test || 'false' }}
+        run: node scripts/send-notifications.mjs
