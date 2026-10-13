@@ -72,6 +72,38 @@ export async function requestNotificationPermission(
 }
 
 /**
+ * 모바일(iOS/Android PWA) 및 데스크톱 환경 모두에서 안전하게 시스템 알림을 표출합니다.
+ * 모바일 브라우저는 new Notification() 직접 호출을 차단하므로 ServiceWorker.showNotification을 우선 사용합니다.
+ */
+export async function showSystemNotification(title: string, body: string, tag?: string) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return
+  if (Notification.permission !== 'granted') return
+
+  const options: NotificationOptions = {
+    body,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    tag,
+  }
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.ready
+      await registration.showNotification(title, options)
+      return
+    }
+  } catch (swErr) {
+    console.warn('ServiceWorker showNotification fallback:', swErr)
+  }
+
+  try {
+    new Notification(title, options)
+  } catch (err) {
+    console.error('Notification dispatch error:', err)
+  }
+}
+
+/**
  * 포그라운드(앱 실행 중) 상태에서 FCM 메시지를 수신합니다.
  */
 export async function setupForegroundMessageListener(
@@ -86,18 +118,13 @@ export async function setupForegroundMessageListener(
     const body = payload.notification?.body || '새로운 일정이 있어요.'
     onReceive({ title, body })
 
-    // 브라우저 네이티브 알림도 함께 표출
-    if (Notification.permission === 'granted') {
-      new Notification(title, {
-        body,
-        icon: '/icon-192.png',
-      })
-    }
+    // 브라우저/모바일 시스템 알림도 함께 표출
+    showSystemNotification(title, body, payload.messageId || 'assign-plan-fg')
   })
 }
 
 /**
- * 마감 임박 일정(D-3, D-1, D-Day 당일)을 검사하여 브라우저 알림을 발송합니다.
+ * 마감 임박 일정(D-3, D-1, D-Day 당일)을 검사하여 오전 10시 이후 알림을 발송합니다.
  * (동일 일정/동일 조건은 하루 1회만 발송되도록 중복 방지 캐시 적용)
  */
 export function checkAndSendDueNotifications(items: ItemData[]) {
@@ -105,6 +132,9 @@ export function checkAndSendDueNotifications(items: ItemData[]) {
   if (Notification.permission !== 'granted') return
 
   const now = new Date()
+  // 오전 10시 이후부터 당일 알림 발송
+  if (now.getHours() < 10) return
+
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
   const dateKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
 
@@ -136,16 +166,8 @@ export function checkAndSendDueNotifications(items: ItemData[]) {
     if (alertType) {
       const cacheKey = `assign_plan_notified_${item.id}_${alertType}_${dateKey}`
       if (!localStorage.getItem(cacheKey)) {
-        try {
-          new Notification(title, {
-            body,
-            icon: '/icon.png',
-            tag: item.id,
-          })
-          localStorage.setItem(cacheKey, 'true')
-        } catch (e) {
-          console.error('Notification dispatch error:', e)
-        }
+        localStorage.setItem(cacheKey, 'true')
+        showSystemNotification(title, body, `${item.id}_${alertType}`)
       }
     }
   })
